@@ -22,6 +22,7 @@ private:
     HeroState state = HeroState::FRONT;
     std::map<HeroState, std::string> gifPath;
     double speed = 5.0;
+    int shift_timer = 0,mouse_l_timer = 0;
 };
 
 #endif

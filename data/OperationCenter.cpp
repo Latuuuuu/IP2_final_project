@@ -17,7 +17,7 @@ void OperationCenter::update() {
 	_update_monster_towerBullet();
 	// If any monster reaches the end, hurt the player and delete the monster.
 	_update_monster_player();
-
+	// If any monster hits hero, monster dies. 
 	_update_monster_hero();
 }
 
