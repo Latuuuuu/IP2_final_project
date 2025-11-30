@@ -1,4 +1,5 @@
 #include "Hero.h"
+#include "Camera.h"
 #include "algif5/algif.h"
 #include "data/GIFCenter.h"
 #include "data/DataCenter.h"
@@ -70,12 +71,14 @@ void Hero::update() {
 }
 
 void Hero::draw() {
+    DataCenter *DC = DataCenter::get_instance();
     GIFCenter *GIFC = GIFCenter::get_instance();
     ALGIF_ANIMATION *gif = GIFC->get(gifPath[state]);
+    Point offset = DC->camera->transform_object(*shape);
     algif_draw_gif(
         gif,
-        shape->center_x() - gif->width / 2.0,
-        shape->center_y() - gif->height / 2.0,
+        offset.center_x() - gif->width / 2.0,
+        offset.center_y() - gif->height / 2.0,
         0
     );
 }

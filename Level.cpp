@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include "monsters/Monster.h"
 #include "data/DataCenter.h"
+#include "Camera.h"
 #include <allegro5/allegro_primitives.h>
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
@@ -91,13 +92,16 @@ Level::update() {
 
 void
 Level::draw() {
+	DataCenter *DC = DataCenter::get_instance();
+	Point p;
 	if(level == -1) return;
 	for(auto &[i, j] : road_path) {
 		int x1 = i * LevelSetting::grid_size[level];
 		int y1 = j * LevelSetting::grid_size[level];
-		int x2 = x1 + LevelSetting::grid_size[level];
-		int y2 = y1 + LevelSetting::grid_size[level];
-		al_draw_filled_rectangle(x1, y1, x2, y2, al_map_rgb(255, 244, 173));
+		p = DC->camera->transform_bitmap(x1, y1);
+		int x2 = p.center_x() + LevelSetting::grid_size[level];
+		int y2 = p.center_y() + LevelSetting::grid_size[level];
+		al_draw_filled_rectangle(p.center_x(), p.center_y(), x2, y2, al_map_rgb(255, 244, 173));
 	}
 }
 

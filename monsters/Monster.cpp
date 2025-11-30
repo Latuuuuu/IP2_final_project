@@ -6,6 +6,7 @@
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
 #include "../Level.h"
+#include "../Camera.h"
 #include "../shapes/Point.h"
 #include "../shapes/Rectangle.h"
 #include "../Utils.h"
@@ -157,8 +158,8 @@ Monster::update() {
 	});
 }
 
-void
-Monster::draw() {
+void Monster::draw() {
+	DataCenter *DC = DataCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	char buffer[50];
 	sprintf(
@@ -167,8 +168,9 @@ Monster::draw() {
 		MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
 		bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
 	ALLEGRO_BITMAP *bitmap = IC->get(buffer);
+	Point offset = DC->camera->transform_object(*shape);
 	al_draw_bitmap(
 		bitmap,
-		shape->center_x() - al_get_bitmap_width(bitmap) / 2,
-		shape->center_y() - al_get_bitmap_height(bitmap) / 2, 0);
+		offset.center_x() - al_get_bitmap_width(bitmap) / 2,
+		offset.center_y() - al_get_bitmap_height(bitmap) / 2, 0);
 }

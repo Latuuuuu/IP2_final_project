@@ -11,6 +11,7 @@
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
 #include "../data/SoundCenter.h"
+#include "../Camera.h"
 #include <allegro5/bitmap_draw.h>
 
 // fixed settings
@@ -90,10 +91,12 @@ Tower::attack(Object *target) {
 
 void
 Tower::draw() {
+	DataCenter *DC = DataCenter::get_instance();
+	Point offset = DC->camera->transform_object(*shape);
 	al_draw_bitmap(
 		bitmap,
-		shape->center_x() - al_get_bitmap_width(bitmap)/2,
-		shape->center_y() - al_get_bitmap_height(bitmap)/2, 0);
+		offset.center_x() - al_get_bitmap_width(bitmap) / 2,
+		offset.center_y() - al_get_bitmap_height(bitmap) / 2, 0);
 }
 
 /**
