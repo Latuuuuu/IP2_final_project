@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Hero.h"
+#include "shapes/Point.h"
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -244,6 +245,7 @@ Game::game_draw() {
 		al_draw_bitmap(background,
 						DC->camera->transform_bitmap(0, 0).center_x(),
 						DC->camera->transform_bitmap(0, 0).center_y(), 0);
+		// al_draw_bitmap(background, 0, 0, 0);
 		// if(DC->game_field_length < DC->window_width)
 		// 	al_draw_filled_rectangle(
 		// 		DC->game_field_length, 0,
@@ -256,6 +258,9 @@ Game::game_draw() {
 		// 		al_map_rgb(100, 100, 100));
 		// user interface
 		if(state != STATE::START) {
+			DC->camera->update_camera(Point(DC->hero->shape->center_x(),
+											DC->hero->shape->center_y()), 
+									Point(0, 0));
 			DC->level->draw();
 			DC->hero->draw();
 			ui->draw();

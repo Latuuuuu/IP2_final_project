@@ -7,16 +7,16 @@
 
 class Camera : public Object{
 public:
-    Camera();
-    void update_camera(Point &dist_to_hero);
+    Camera(int w, int h);
+    void update_camera(Point hero_position, Point dist_to_hero);
     void draw() override;
     Point transform_object(Shape &object_position);
     Point transform_bitmap(int x, int y);
 private:
     int camera_x;
     int camera_y;
-    double w;
-    double h;
+    int w;
+    int h;
 };
 
 #endif

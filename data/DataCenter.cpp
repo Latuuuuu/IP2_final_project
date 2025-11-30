@@ -29,7 +29,7 @@ DataCenter::DataCenter() {
 	player = new Player();
 	level = new Level();
 	hero = new Hero();
-	camera = new Camera();
+	camera = new Camera(this->window_width, this->window_height);
 }
 
 DataCenter::~DataCenter() {

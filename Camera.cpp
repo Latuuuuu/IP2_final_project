@@ -1,24 +1,21 @@
 #include "Camera.h"
-#include "data/DataCenter.h"
-#include "data/ImageCenter.h"
 #include "shapes/Point.h"
-#include "Hero.h"
-
+#include <iostream>
 using namespace std;
 
-Camera::Camera() {
-    DataCenter *DC = DataCenter::get_instance();
-    this->camera_x = DC->hero->shape->center_x();
-    this->camera_y =  DC->hero->shape->center_y();
-    this->w = DC->window_width / 2;
-    this->h = DC->window_height / 2;
+Camera::Camera(int w, int h) {
+    this->camera_x = w / 2.0;
+    this->camera_y =  h / 2.0;
+    cout << this->camera_x << " " << this->camera_y << endl;
+    this->w = w / 2.0;
+    this->h = h / 2.0;
 }
 void Camera::draw() {
     return;
 }
-void Camera::update_camera(Point &dist_to_hero) {
-    this->camera_x += dist_to_hero.center_x();
-    this->camera_y += dist_to_hero.center_y();
+void Camera::update_camera(Point hero_position, Point dist_to_hero) {
+    this->camera_x = hero_position.center_x() + dist_to_hero.center_x();
+    this->camera_y = hero_position.center_y() + dist_to_hero.center_y();
 }
 Point Camera::transform_bitmap(int x, int y) {
     Point p(x - this->camera_x + w, y - this->camera_y + h);
