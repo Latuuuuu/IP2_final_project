@@ -16,6 +16,12 @@ public:
 	static double dist(const Point &p1, const Point &p2) {
 		return std::sqrt(dist2(p1, p2));
 	}
+	static double dist(const Point &p1) {
+		return std::sqrt(p1.x * p1.x + p1.y * p1.y);
+	}
+	Point operator+(const Point &p2) {
+		return Point(this->center_x() + p2.center_x(), this->center_y() + p2.center_y());
+	}
 public:
 	bool overlap(const Shape &s) const;
 	double center_x() const { return x; }
