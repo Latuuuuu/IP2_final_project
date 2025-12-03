@@ -1,11 +1,10 @@
-#include "Monster2.h"
+#include "Monster4.h"
 #include "../Hero.h"
 #include "../towers/Bullet.h"
 
 using namespace std;
 
-
-void Monster2::attack() {
+void Monster4::attack() {
 	DataCenter *DC = DataCenter::get_instance();
 	// ImageCenter *IC = ImageCenter::get_instance();
 	Bullet *atk;

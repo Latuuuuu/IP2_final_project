@@ -1,14 +1,14 @@
-#ifndef MONSTER2_H_INCLUDED
-#define MONSTER2_H_INCLUDED
+#ifndef MONSTER4_H_INCLUDED
+#define MONSTER4_H_INCLUDED
 
 #include "MonsterT.h"
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
 
-class Monster2 : public MonsterT
+class Monster4 : public MonsterT
 {
 public:
-	Monster2(Point borned_place) : MonsterT(MonsterType::MONSTER2, borned_place) {
+	Monster4(Point borned_place) : MonsterT(MonsterType::MONSTER4, borned_place) {
 		// DataCenter *DC = DataCenter::get_instance();
 		ImageCenter *IC = ImageCenter::get_instance();
 		HP = 100;

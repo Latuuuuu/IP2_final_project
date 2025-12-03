@@ -2,6 +2,7 @@
 #include "Monster1.h"
 #include "Monster2.h"
 #include "Monster3.h"
+#include "Monster4.h"
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
 #include "../Hero.h"
@@ -17,36 +18,23 @@
 
 using namespace std;
 
-namespace MonsterSetting {
-	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][40] = {
-		"./assets/image/monster/Monster1",
-		"./assets/image/monster/Monster2",
-		"./assets/image/monster/Monster3"
-		// "./assets/image/monster/Monster4",
-	};
-	static constexpr char dir_path_prefix[][10] = {
-		"UP", "DOWN", "LEFT", "RIGHT"
-	};
-}
-
-MonsterT *MonsterT::create_monster(MonsterType type, Point borned_place, Point size) {
-	switch(type) {
+MonsterT *MonsterT::create_monster(MonsterType type, Point borned_place) {
+	switch (type) {
 		case MonsterType::MONSTER1: {
 			cout << "create monster1";
-			return new Monster1(borned_place, size);
+			return new Monster1(borned_place);
 		}
 		case MonsterType::MONSTER2: {
 			cout << "create monster2";
-			return new Monster2(borned_place, size);
+			return new Monster2(borned_place);
 		}
 		case MonsterType::MONSTER3: {
 			cout << "create monster3";
-			return new Monster3(borned_place, size);
+			return new Monster3(borned_place);
 		}
 		case MonsterType::MONSTER4: {
 			cout << "create monster4";
-			return nullptr;
-			// return new Monster4(borned_place, size);
+			return new Monster4(borned_place);
 		}
 		case MonsterType::MONSTERTYPE_MAX: {}
 	}
@@ -84,17 +72,16 @@ Point MonsterT::dir_to_vector(const Dir dir) {
 	}
 }
 
-MonsterT::MonsterT(MonsterType type, Point borned_place, Point size) {
-	// DataCenter *DC = DataCenter::get_instance();
+MonsterT::MonsterT(MonsterType type, Point borned_place) {
 
 	shape.reset(new Rectangle{borned_place.x, borned_place.y, borned_place.x, borned_place.y});
 	this->type = type;
 	this->action = Action::IDLE;
 	this->action_timer[0] = 5000;
-	this->action_timer[1] = 10000;
+	this->action_timer[1] = 5000;
 	this->action_timer[2] = 20000;
 	this->action_timer[3] = 1000;
-	this->attack_cd = 500;
+	this->attack_cd = 100;
 	this->can_attack = false;
 	dir = Dir::RIGHT;
 	this->timer = clock();
@@ -103,20 +90,7 @@ MonsterT::MonsterT(MonsterType type, Point borned_place, Point size) {
 	bitmap_img_id = 0;
 	bitmap_switch_counter = 0;
 }
-void MonsterT::attack() {
-	// attack
-	DataCenter *DC = DataCenter::get_instance();
-	const Point &p = Point(shape->center_x(), shape->center_y());
-	Bullet *atk;
-	if (this->action == Action::CHASE) {
-		const Point &t = Point(DC->hero->shape->center_x(), DC->hero->shape->center_y());
-		atk = new Bullet(p, t, "assets/image/tower/Arcane_Beam.png", 480, 20, 500);
-	} else {
-		const Point &t = dir_to_vector(dir);
-		atk = new Bullet(p, t, "assets/image/tower/Arcane_Beam.png", 480, 20, 500);
-	}
-	DC->towerBullets.emplace_back(atk);
-}
+void MonsterT::attack() {}
 Point MonsterT::hero_tracker() {
 	DataCenter *DC = DataCenter::get_instance();
 	Point dir_vector;
@@ -129,7 +103,7 @@ Point MonsterT::hero_tracker() {
 }
 void MonsterT::update() {
 	DataCenter *DC = DataCenter::get_instance();
-	ImageCenter *IC = ImageCenter::get_instance();
+	// ImageCenter *IC = ImageCenter::get_instance();
 
 	// After a period, the bitmap for this monster should switch from (i)-th image to (i+1)-th image to represent animation.
 	if(bitmap_switch_counter) --bitmap_switch_counter;
@@ -146,7 +120,9 @@ void MonsterT::update() {
 	/* 亂數的機率分布 */
 	std::uniform_int_distribution<int> unif(static_cast<int>(Action::STAND), static_cast<int>(Action::TELEPORT));
 	/* 產生亂數 */
+	// cout << int(clock() - this->cd_timer) << " " << attack_cd << " " << can_attack << endl;
 	if (int(clock() - this->cd_timer) >= attack_cd && can_attack) {
+		// cout << "can attack" << endl;
 		attack();
 		this->cd_timer = clock();
 	}
@@ -163,7 +139,8 @@ void MonsterT::update() {
 			need_effect = false;
 		}
 		if ((int)(clock() - this->timer) >= action_timer[(int)Action::IDLE]) {
-			this->action = static_cast<Action>(unif(generator));
+			// this->action = static_cast<Action>(unif(generator));
+			this->action = Action::STAND;
 			this->timer = clock();
 		}
 		break;
@@ -174,54 +151,72 @@ void MonsterT::update() {
 		dir = convert_dir(Point{dx, dy});
 		if ((int)(clock() - this->timer) >= action_timer[(int)Action::STAND]) {
 			can_attack = false;
-			this->action = static_cast<Action>(unif(generator));
+			// this->action = static_cast<Action>(unif(generator));
+			this->action = Action::CHASE;
 			this->timer = clock();
+			// cout << "convert to chase" << endl;
 		}
 		break;
 	case Action::CHASE:
+		// cout << "chase mode" << endl;
 		can_attack = true;
 		// follow hero
-		dx *= movement;
-		dy *= movement;
 		dir = convert_dir(Point{dx, dy});
-		shape->update_center_x(shape->center_x() + dx);
-		shape->update_center_y(shape->center_y() + dy);
+		if (!is_collid) {
+			shape->update_center_x(shape->center_x() + dx * movement);
+			shape->update_center_y(shape->center_y() + dy * movement);
+		} else {
+			is_collid = false;
+		}
+		// cout << "update pose" << endl;
+		// cout << shape->center_x() << " " << shape->center_y() << endl;
 		if ((int)(clock() - this->timer) >= action_timer[(int)Action::CHASE]) {
 			can_attack = false;
-			this->action = static_cast<Action>(unif(generator));
+			this->action = Action::TELEPORT;
+			// this->action = static_cast<Action>(unif(generator));
 			this->timer = clock();
 		}
+		// cout << can_attack << endl;
 		break;
 	case Action::TELEPORT:
 		// transport to a point near hero (need to detect the place's validation)
-		dx *= this->dist_to_hero;
-		dy *= this->dist_to_hero;
-		shape->update_center_x(shape->center_x() + dx);
-		shape->update_center_y(shape->center_y() + dy);
+		// cout << "teleport" << endl;
+		// cout << "hero x: " << DC->hero->shape->center_x() << ", hero y: " << DC->hero->shape->center_y() << endl;
+		// cout << "dist to hero: " << this->dist_to_hero << ", hero_w: " << DC->hero->get_size().center_x() << ", hero_h: " << DC->hero->get_size().center_y() << endl;
+		dx *= this->dist_to_hero - DC->hero->get_size().center_x() * 1.5;
+		dy *= this->dist_to_hero - DC->hero->get_size().center_y() * 1.5;
+		// cout << "(dx, dy): " << dx << ", " << dy << endl;
+		if (!is_collid) {
+			shape->update_center_x(shape->center_x() + dx);
+			shape->update_center_y(shape->center_y() + dy);
+		} else {
+			is_collid = false;
+		}
 		// display transport effect
 		this->can_attack = false;
-		this->action = static_cast<Action>(unif(generator));
+		this->action = Action::STAND;
+		// this->action = static_cast<Action>(unif(generator));
 		break;
 	default:
 		break;
 	}
-	// Update real hit box for monster.
-	char buffer[50];
-	sprintf(
-		buffer, "%s/%s_%d.png",
-		MonsterSetting::monster_imgs_root_path[static_cast<int>(type)],
-		MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
-		bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
-	ALLEGRO_BITMAP *bitmap = IC->get(buffer);
-	const double &cx = shape->center_x();
-	const double &cy = shape->center_y();
-	// We set the hit box slightly smaller than the actual bounding box of the image because there are mostly empty spaces near the edge of a image.
-	const int &h = al_get_bitmap_width(bitmap) * 0.8;
-	const int &w = al_get_bitmap_height(bitmap) * 0.8;
-	shape.reset(new Rectangle{
-		(cx - w / 2.), (cy - h / 2.),
-		(cx - w / 2. + w), (cy - h / 2. + h)
-	});
+	// // Update real hit box for monster.
+	// char buffer[50];
+	// sprintf(
+	// 	buffer, "%s/%s_%d.png",
+	// 	MonsterSetting::monster_imgs_root_path[static_cast<int>(type)],
+	// 	MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
+	// 	bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
+	// ALLEGRO_BITMAP *bitmap = IC->get(buffer);
+	// const double &cx = shape->center_x();
+	// const double &cy = shape->center_y();
+	// // We set the hit box slightly smaller than the actual bounding box of the image because there are mostly empty spaces near the edge of a image.
+	// const int &h = al_get_bitmap_width(bitmap) * 0.8;
+	// const int &w = al_get_bitmap_height(bitmap) * 0.8;
+	// shape.reset(new Rectangle{
+	// 	(cx - w / 2.), (cy - h / 2.),
+	// 	(cx - w / 2. + w), (cy - h / 2. + h)
+	// });
 }
 
 void MonsterT::draw() {
