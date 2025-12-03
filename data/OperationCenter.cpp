@@ -1,10 +1,12 @@
 #include "OperationCenter.h"
 #include "DataCenter.h"
 #include "../monsters/Monster.h"
+#include "../monsters/MonsterT.h"
 #include "../towers/Tower.h"
 #include "../towers/Bullet.h"
 #include "../Player.h"
 #include "../Hero.h"
+#include <iostream>
 
 void OperationCenter::update() {
 	// Update monsters.
@@ -15,13 +17,16 @@ void OperationCenter::update() {
 	_update_towerBullet();
 	// If any bullet overlaps with any monster, we delete the bullet, reduce the HP of the monster, and delete the monster if necessary.
 	_update_monster_towerBullet();
-	// If any monster reaches the end, hurt the player and delete the monster.
-	_update_monster_player();
+	// // If any monster reaches the end, hurt the player and delete the monster.
+	// _update_monster_player();
 	// If any monster hits hero, monster dies. 
 	_update_monster_hero();
 }
 
 void OperationCenter::_update_monster() {
+	MonsterT *monster = DataCenter::get_instance()->monster;
+	if (monster != nullptr)
+		monster->update();
 	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;
 	for(Monster *monster : monsters)
 		monster->update();
@@ -50,6 +55,7 @@ void OperationCenter::_update_towerBullet() {
 void OperationCenter::_update_monster_towerBullet() {
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<Monster*> &monsters = DC->monsters;
+	// MonsterT *monster = DC->monster;
 	std::vector<Bullet*> &towerBullets = DC->towerBullets;
 	for(size_t i = 0; i < monsters.size(); ++i) {
 		for(size_t j = 0; j < towerBullets.size(); ++j) {
@@ -63,39 +69,85 @@ void OperationCenter::_update_monster_towerBullet() {
 			}
 		}
 	}
-}
-
-void OperationCenter::_update_monster_player() {
-	DataCenter *DC = DataCenter::get_instance();
-	std::vector<Monster*> &monsters = DC->monsters;
-	Player *&player = DC->player;
-	for(size_t i = 0; i < monsters.size(); ++i) {
-		// Check if the monster is killed.
-		if(monsters[i]->HP <= 0) {
-			// Monster gets killed. Player receives money.
-			player->coin += monsters[i]->get_money();
-			delete monsters[i];
-			monsters.erase(monsters.begin() + i);
-			--i;
-			// Since the current monsster is killed, we can directly proceed to next monster.
-			break;
+	if (DC->monster == nullptr) return;
+	for (size_t j = 0; j < towerBullets.size(); ++j) {
+		// Check if the bullet overlaps with the monster.
+		if (DC->monster->shape->overlap(*(towerBullets[j]->shape))) {
+			// Reduce the HP of the monster. Delete the bullet.
+			DC->monster->HP -= towerBullets[j]->get_dmg();
+			delete towerBullets[j];
+			towerBullets.erase(towerBullets.begin() + j);
+			--j;
 		}
-		// Check if the monster reaches the end.
-		if(monsters[i]->get_path().empty()) {
-			delete monsters[i];
-			monsters.erase(monsters.begin() + i);
-			player->HP--;
-			--i;
+		if (DC->monster->HP <= 0) {
+			DC->monster = nullptr;
+			break;
 		}
 	}
 }
 
+void OperationCenter::_update_hero_towerBullet() {
+	DataCenter *DC = DataCenter::get_instance();
+	std::vector<Bullet*> &towerBullets = DC->towerBullets;
+	if (DC->hero == nullptr) return;
+	for (size_t j = 0; j < towerBullets.size(); ++j) {
+		// Check if the bullet overlaps with the monster.
+		if (DC->hero->shape->overlap(*(towerBullets[j]->shape))) {
+			// Reduce the HP of the monster. Delete the bullet.
+			DC->hero->HP -= towerBullets[j]->get_dmg();
+			delete towerBullets[j];
+			towerBullets.erase(towerBullets.begin() + j);
+			--j;
+		}
+	}
+}
+
+// void OperationCenter::_update_monster_player() {
+// 	DataCenter *DC = DataCenter::get_instance();
+// 	std::vector<Monster*> &monsters = DC->monsters;
+// 	// MonsterT *monster = DC->monster;
+// 	Player *&player = DC->player;
+// 	for (size_t i = 0; i < monsters.size(); ++i) {
+// 		// Check if the monster is killed.
+// 		if(monsters[i]->HP <= 0) {
+// 			// Monster gets killed. Player receives money.
+// 			player->coin += monsters[i]->get_money();
+// 			delete monsters[i];
+// 			monsters.erase(monsters.begin() + i);
+// 			--i;
+// 			// Since the current monsster is killed, we can directly proceed to next monster.
+// 			break;
+// 		}
+// 		// Check if the monster reaches the end.
+// 		if(monsters[i]->get_path().empty()) {
+// 			delete monsters[i];
+// 			monsters.erase(monsters.begin() + i);
+// 			player->HP--;
+// 			--i;
+// 		}
+// 	}
+// }
+
 void OperationCenter::_update_monster_hero() {
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<Monster*> &monsters = DC->monsters;
+	// MonsterT *monster = DC->monster;
 	for(size_t i = 0; i < monsters.size(); ++i) {
 		if(monsters[i]->shape->overlap(*(DC->hero->shape))){
 			monsters[i]->HP = 0;
+		}
+	}
+	if (DC->monster == nullptr)
+		return;
+	if(DC->monster->shape->overlap(*(DC->hero->shape))){
+		// std::cout << "monster&hero collid" << std::endl;
+		DC->hero->is_collid = true;
+		DC->monster->is_collid = true;
+		DC->hero->jump_back(Point(DC->monster->shape->center_x(), 
+								  DC->monster->shape->center_y()));
+		DC->monster->HP -= DC->hero->get_dmg();
+		if (DC->monster->HP <= 0) {
+			DC->monster = nullptr;
 		}
 	}
 }
@@ -107,6 +159,9 @@ void OperationCenter::draw() {
 }
 
 void OperationCenter::_draw_monster() {
+	MonsterT *monster = DataCenter::get_instance()->monster;
+	if (monster != nullptr)
+		monster->draw();
 	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;
 	for(Monster *monster : monsters)
 		monster->draw();
