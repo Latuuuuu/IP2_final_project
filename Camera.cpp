@@ -25,3 +25,7 @@ Point Camera::transform_object(Shape &object_position) {
     Point p(object_position.center_x() - this->camera_x + w, object_position.center_y() - this->camera_y + h);
     return p;
 }
+Point Camera::camera_to_global(Point point) {
+    Point p(point.center_x() + this->camera_x - w, point.center_y() + this->camera_y - h);
+    return p;
+}

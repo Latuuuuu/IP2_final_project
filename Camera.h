@@ -12,6 +12,7 @@ public:
     void draw() override;
     Point transform_object(Shape &object_position);
     Point transform_bitmap(int x, int y);
+    Point camera_to_global(Point point);
 private:
     int camera_x;
     int camera_y;
