@@ -7,16 +7,17 @@
 #include <algorithm>
 #include <allegro5/bitmap_draw.h>
 
-Bullet::Bullet(const Point &p, const Point &target, const std::string &path, double v, int dmg, double fly_dist) {
+Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, double v, int dmg, double fly_dist) {
 	ImageCenter *IC = ImageCenter::get_instance();
+	// DataCenter *DC = DataCenter::get_instance();
 	this->fly_dist = fly_dist;
 	this->dmg = dmg;
 	bitmap = IC->get(path);
 	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.8;
 	shape.reset(new Circle{p.x, p.y, r});
-	double d = Point::dist(p, target);
-	vx = (target.x - p.x) * v / d;
-	vy = (target.y - p.y) * v / d;
+	double d = Point::dist(vector);
+	vx = vector.x * v / d;
+	vy = vector.y * v / d;
 }
 
 /**
