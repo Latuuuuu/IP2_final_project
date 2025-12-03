@@ -56,7 +56,7 @@ Level::load_level(int lvl) {
 	int num;
 	// read total number of monsters & number of each monsters
 	fscanf(f, "%d", &num);
-	for(size_t i = 0; i < static_cast<size_t>(MonsterType::MONSTERTYPE_MAX); ++i) {
+	for(size_t i = 0; i < static_cast<size_t>(MonsterType_old::MONSTERTYPE_MAX); ++i) {
 		fscanf(f, "%d", &num);
 		num_of_monsters.emplace_back(num);
 	}
@@ -83,7 +83,7 @@ Level::update() {
 
 	for(size_t i = 0; i < num_of_monsters.size(); ++i) {
 		if(num_of_monsters[i] == 0) continue;
-		DC->monsters.emplace_back(Monster::create_monster(static_cast<MonsterType>(i), DC->level->get_road_path()));
+		DC->monsters.emplace_back(Monster::create_monster(static_cast<MonsterType_old>(i), DC->level_old->get_road_path()));
 		num_of_monsters[i]--;
 		break;
 	}
