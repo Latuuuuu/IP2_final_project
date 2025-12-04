@@ -10,7 +10,7 @@
 enum class Dir;
 
 // fixed settings
-enum class MonsterType {
+enum class MonsterType_old {
 	WOLF, CAVEMAN, WOLFKNIGHT, DEMONNIJIA, MONSTERTYPE_MAX
 };
 
@@ -21,9 +21,9 @@ enum class MonsterType {
 class Monster : public Object
 {
 public:
-	static Monster *create_monster(MonsterType type, const std::vector<Point> &path);
+	static Monster *create_monster(MonsterType_old type, const std::vector<Point> &path);
 public:
-	Monster(const std::vector<Point> &path, MonsterType type);
+	Monster(const std::vector<Point> &path, MonsterType_old type);
 	void update();
 	void draw();
 	const int &get_money() const { return money; }
@@ -69,7 +69,7 @@ protected:
 	int bitmap_switch_freq;
 	int bitmap_img_id;
 private:
-	MonsterType type;
+	MonsterType_old type;
 	Dir dir;
 	std::queue<Point> path;
 };

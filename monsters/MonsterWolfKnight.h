@@ -7,7 +7,7 @@
 class MonsterWolfKnight : public Monster
 {
 public:
-	MonsterWolfKnight(const std::vector<Point> &path) : Monster{path, MonsterType::WOLFKNIGHT} {
+	MonsterWolfKnight(const std::vector<Point> &path) : Monster{path, MonsterType_old::WOLFKNIGHT} {
 		HP = 15;
 		v = 80;
 		money = 30;

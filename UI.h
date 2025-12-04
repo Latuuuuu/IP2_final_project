@@ -6,10 +6,10 @@
 #include <tuple>
 #include "./shapes/Point.h"
 
-class UI
+class UI_game
 {
 public:
-	UI() {}
+	UI_game() {}
 	void init();
 	void update();
 	void draw();

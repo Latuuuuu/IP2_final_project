@@ -7,7 +7,7 @@
 class MonsterCaveMan : public Monster
 {
 public:
-	MonsterCaveMan(const std::vector<Point> &path) : Monster{path, MonsterType::CAVEMAN} {
+	MonsterCaveMan(const std::vector<Point> &path) : Monster{path, MonsterType_old::CAVEMAN} {
 		HP = 25;
 		v = 40;
 		money = 20;

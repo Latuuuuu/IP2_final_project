@@ -9,10 +9,13 @@
 
 class Player;
 class Level;
+class LevelT;
 class Monster;
+class MonsterT;
 class Tower;
 class Bullet;
 class Hero;
+class Camera;
 
 /**
  * @brief Stores generic global data and relatively small data structures.
@@ -28,6 +31,7 @@ public:
 		return &DC;
 	}
 	~DataCenter();
+	void reset_bullet();
 public:
 	double FPS;
 	int window_width, window_height;
@@ -77,12 +81,14 @@ public:
 	 * @brief Loads and stores the information of a level.
 	 * @see Level
 	 */
-	Level *level;
+	LevelT *level;
+	Level *level_old;
 	/**
 	 * @brief Raw list of Monster objects.
 	 * @see Monster
 	 */
 	std::vector<Monster*> monsters;
+	MonsterT* monster;
 	/**
 	 * @brief Raw list of Tower objects.
 	 * @see Tower
@@ -95,6 +101,7 @@ public:
 	std::vector<Bullet*> towerBullets;
 
 	Hero *hero;
+	Camera *camera;
 private:
 	DataCenter();
 };

@@ -6,6 +6,7 @@
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
 #include "../Level.h"
+#include "../Camera.h"
 #include "../shapes/Point.h"
 #include "../shapes/Rectangle.h"
 #include "../Utils.h"
@@ -18,7 +19,7 @@ enum class Dir {
 	UP, DOWN, LEFT, RIGHT
 };
 namespace MonsterSetting {
-	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][40] = {
+	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType_old::MONSTERTYPE_MAX)][40] = {
 		"./assets/image/monster/Wolf",
 		"./assets/image/monster/CaveMan",
 		"./assets/image/monster/WolfKnight",
@@ -36,21 +37,21 @@ namespace MonsterSetting {
  * @return The curresponding Monster* instance.
  * @see Level::grid_to_region(const Point &grid) const
  */
-Monster *Monster::create_monster(MonsterType type, const vector<Point> &path) {
+Monster *Monster::create_monster(MonsterType_old type, const vector<Point> &path) {
 	switch(type) {
-		case MonsterType::WOLF: {
+		case MonsterType_old::WOLF: {
 			return new MonsterWolf{path};
 		}
-		case MonsterType::CAVEMAN: {
+		case MonsterType_old::CAVEMAN: {
 			return new MonsterCaveMan{path};
 		}
-		case MonsterType::WOLFKNIGHT: {
+		case MonsterType_old::WOLFKNIGHT: {
 			return new MonsterWolfKnight{path};
 		}
-		case MonsterType::DEMONNIJIA: {
+		case MonsterType_old::DEMONNIJIA: {
 			return new MonsterDemonNinja{path};
 		}
-		case MonsterType::MONSTERTYPE_MAX: {}
+		case MonsterType_old::MONSTERTYPE_MAX: {}
 	}
 	GAME_ASSERT(false, "monster type error.");
 }
@@ -70,7 +71,7 @@ Dir convert_dir(const Point &v) {
 	return Dir::RIGHT;
 }
 
-Monster::Monster(const vector<Point> &path, MonsterType type) {
+Monster::Monster(const vector<Point> &path, MonsterType_old type) {
 	DataCenter *DC = DataCenter::get_instance();
 
 	shape.reset(new Rectangle{0, 0, 0, 0});
@@ -82,7 +83,7 @@ Monster::Monster(const vector<Point> &path, MonsterType type) {
 		this->path.push(p);
 	if(!path.empty()) {
 		const Point &grid = this->path.front();
-		const Rectangle &region = DC->level->grid_to_region(grid);
+		const Rectangle &region = DC->level_old->grid_to_region(grid);
 		// Temporarily set the bounding box to the center (no area) since we haven't got the hit box of the monster.
 		shape.reset(new Rectangle{region.center_x(), region.center_y(), region.center_x(), region.center_y()});
 		this->path.pop();
@@ -111,7 +112,7 @@ Monster::update() {
 	// Keep trying to move to next destination in "path" while "path" is not empty and we can still move.
 	while(!path.empty() && movement > 0) {
 		const Point &grid = this->path.front();
-		const Rectangle &region = DC->level->grid_to_region(grid);
+		const Rectangle &region = DC->level_old->grid_to_region(grid);
 		const Point &next_goal = Point{region.center_x(), region.center_y()};
 
 		// Extract the next destination as "next_goal". If we want to reach next_goal, we need to move "d" pixels.
@@ -157,8 +158,8 @@ Monster::update() {
 	});
 }
 
-void
-Monster::draw() {
+void Monster::draw() {
+	DataCenter *DC = DataCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	char buffer[50];
 	sprintf(
@@ -167,8 +168,9 @@ Monster::draw() {
 		MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
 		bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
 	ALLEGRO_BITMAP *bitmap = IC->get(buffer);
+	Point offset = DC->camera->transform_object(*shape);
 	al_draw_bitmap(
 		bitmap,
-		shape->center_x() - al_get_bitmap_width(bitmap) / 2,
-		shape->center_y() - al_get_bitmap_height(bitmap) / 2, 0);
+		offset.center_x() - al_get_bitmap_width(bitmap) / 2,
+		offset.center_y() - al_get_bitmap_height(bitmap) / 2, 0);
 }
