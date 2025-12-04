@@ -9,10 +9,22 @@
  * @brief The bullet shot from Tower.
  * @see Tower
  */
+
+enum BulletState{
+    BALL,
+    SOLID,
+    LIQUID,
+    GAS,
+	POSITIVE,
+	NEGATIVE,
+    BULLETSTATE_MAX
+};
+
 class Bullet : public Object
 {
 public:
 	Bullet(const Point &p, const Point &target, const std::string &path, double v, int dmg, double fly_dist);
+	Bullet(const Point &p, const Point &target, const std::string &path, double v, int dmg, double fly_dist, BulletState state);
 	void update();
 	void draw();
 	const double &get_fly_dist() const { return fly_dist; }
@@ -38,6 +50,7 @@ private:
 	 * @brief ALLEGRO_BITMAP of the bullet.
 	 */
 	ALLEGRO_BITMAP *bitmap;
+    BulletState state;
 };
 
 #endif
