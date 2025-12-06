@@ -209,9 +209,11 @@ bool Game::game_update() {
 			if (button == 0) {
 				// modify difficulty
 			} else if (button == 1) {
-				// modify sound
+				if (SC->gain <= 0.9)
+					SC->gain += 0.1;
 			} else if (button == 2) {
-				// modify music
+				if (SC->gain >= 0.1)
+					SC->gain -= 0.1;
 			} else if (button == 3) {
 				state = STATE::MENU;
 			}

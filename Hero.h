@@ -50,6 +50,7 @@ private:
     std::vector<std::vector<std::string>> all_skin_paths;
     std::map<BulletState, std::string> bullet_gifPath;
     Point size;
+    Point tool_place;
     double tool_angle;
     double speed = 200.0;
     double speed_x = 0.0;

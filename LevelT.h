@@ -28,8 +28,8 @@ namespace LevelSetting {
 	constexpr int monster_spawn_x[4] = {
 		1920, 5120, 8320, 11520
 	};
-	constexpr int lvl_bound_x[4] = {
-		3200, 6400, 9600, 12800
+	constexpr int lvl_bound_x[5] = {
+		0, 3200, 6400, 9600, 12800
 	};
 	const std::array<std::string, 4> lvl_background_path = {
 		"./assets/image/lvl_background.png",

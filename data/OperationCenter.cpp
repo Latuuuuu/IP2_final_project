@@ -20,12 +20,16 @@ void OperationCenter::update() {
 	_update_tool();
 	// If any bullet overlaps with any monster, we delete the bullet, reduce the HP of the monster, and delete the monster if necessary.
 	_update_monster_bullet();
+	_update_hero_bullet();
 	// If any monster hits hero, monster dies. 
 	_update_monster_hero();
 
 	_update_block();
 
 	_update_hero_block();
+	_update_bullet_bullet();
+	_update_tool_bullet();
+	_update_tool_others();
 }
 
 void OperationCenter::_update_monster() {
@@ -250,11 +254,11 @@ void OperationCenter::_update_tool_others() {
 			tools.erase(tools.begin() + tools.size() - 1);
 		}
 		if (tools[i]->shape->overlap(*(hero->shape))) {
-			// std::cout << "tool&hero collid" << std::endl;
 			hero->is_collid = true;
 		}
+		if (monster == nullptr)
+			continue;
 		if (tools[i]->shape->overlap(*(monster->shape))) {
-			// std::cout << "tool&monster collid" << std::endl;
 			monster->is_collid = true;
 		}
 	}

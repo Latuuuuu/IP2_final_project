@@ -57,20 +57,19 @@ void Hero::init(int lvl) {
     this->dmg = 50;
     this->HP = 500;
     is_collid = false;
-    if (lvl != 2 || lvl != 4)
-        this->max_tool_num = 0;
-    else
-        this->max_tool_num = 5;
     if (lvl == 0) {
         this->level += 1;
-        std::cout << shape->center_x() << " " << shape->center_y() << std::endl;
-        return;
+    } else {
+        this->level = lvl;
+        shape.reset(new Rectangle{
+            LevelSetting::hero_spawn_x[lvl-1] - size.x / 2 , DC->window_height / 2 - size.y / 2,
+            LevelSetting::hero_spawn_x[lvl-1] + size.x / 2, DC->window_height / 2 + size.y / 2
+        });
     }
-    this->level = lvl;
-    shape.reset(new Rectangle{
-        -100 - size.x / 2 , DC->window_height / 2 - size.y / 2,//LevelSetting::hero_spawn_x[lvl-1]
-        -100 + size.x / 2, DC->window_height / 2 + size.y / 2
-    });
+    if (this->level == 2 || this->level == 4)
+        this->max_tool_num = 5;
+    else
+        this->max_tool_num = 0;
 }
 
 void Hero::jump_back(Point obj_point) {
@@ -138,6 +137,13 @@ void Hero::update() {
         shift_timer = 60;
         speed = 400.0;
     }
+    const Point &hero_center = Point(shape->center_x(), shape->center_y());
+    const Point &mouse = DC->camera->camera_to_global(DC->mouse);
+    const double dist = Point::dist(hero_center, mouse) / 80;
+    Point v = Point((mouse.center_x() - hero_center.center_x()) / dist, (mouse.center_y() - hero_center.center_y()) / dist);
+    this->tool_angle = std::atan2(v.center_y(), v.center_x());
+    tool_place = v + hero_center;
+    // std::cout << tool_place.x << " " << tool_place.y << " " << this->tool_angle << std::endl;
 
     if (DC->mouse_state[2] && !DC->prev_mouse_state[2]) { //右鍵切換形態
         if (skill_state == SkillState::SLG) { //三態變化技
@@ -159,13 +165,7 @@ void Hero::update() {
                 std :: cout << "to solid!\n";
             }
         } else if (skill_state == SkillState::WAVE) { // 放置道具
-            const Point &p = Point(shape->center_x(), shape->center_y());
-            const Point &mouse = DC->camera->camera_to_global(DC->mouse);
-            const double dist = Point::dist(p, mouse) / 80;
-            Point v = Point((mouse.center_x() - p.center_x()) / dist, (mouse.center_y() - p.center_y()) / dist);
-            this->tool_angle = std::atan2(v.center_y(), v.center_x());
-            v = v + p;
-            Tool *tool = new Tool(v, this->tool_angle, this->tool_type);
+            Tool *tool = new Tool(tool_place, this->tool_angle, this->tool_type);
             DC->tools.emplace_back(tool);
         } else if (skill_state == SkillState::ELECTRIC) { //正負電變化技
             if (bullet_state == BulletState::POSITIVE) {
@@ -187,9 +187,11 @@ void Hero::update() {
             bullet_state = BulletState::LASER;
             mouse_l_timer = 1;
         }
-        const Point &p = Point(shape->center_x(), shape->center_y());
-        const Point &mouse = DC->camera->camera_to_global(DC->mouse);
+        // const Point &p = Point(shape->center_x(), shape->center_y());
 		const Point &t = Point(mouse.center_x() - shape->center_x(), mouse.center_y() - shape->center_y());
+        double d = Point::dist(t);
+        const Point &p = Point(t.x / d * std::max(size.x, size.y) + shape->center_x(),
+							   t.y / d * std::max(size.x, size.y) + shape->center_y());
         std::string bullet_path = bullet_gifPath[bullet_state];
 		Bullet *atk = new Bullet(p, t, bullet_path, 480, 1, 500, bullet_state);
         DC->bullets.emplace_back(atk);
@@ -245,13 +247,15 @@ void Hero::draw() {
 void Hero::draw_tool_icon() {
 	DataCenter *DC = DataCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
-	Point offset = DC->camera->transform_object(*shape);
-	Point hero_pt = DC->camera->transform_object(*DC->hero->shape);
+	Point offset = DC->camera->transform_bitmap(tool_place.center_x(), tool_place.center_y());
+	Point hero_pt = DC->camera->transform_object(*shape);
+    // std::cout << "tp1:" << offset.x << " " << offset.y << std::endl;
+    // std::cout << "hp1:" << hero_pt.x << " " << hero_pt.y << std::endl;
 	std::string path = std::string(ToolSetting::root_path) + "/" + ToolSetting::tool_icon_path[static_cast<int>(this->tool_type)] + ".png";
 	ALLEGRO_BITMAP *bitmap = IC->get(path);
     al_draw_rotated_bitmap(bitmap,
-						hero_pt.center_x(),
-						hero_pt.center_y(),
-						offset.center_x() - al_get_bitmap_width(bitmap) / 2, 
-						offset.center_y() - al_get_bitmap_height(bitmap) / 2, this->tool_angle, 0);
+						al_get_bitmap_width(bitmap) / 2.0,
+						al_get_bitmap_height(bitmap) / 2.0,
+						offset.center_x(), 
+						offset.center_y(), this->tool_angle, 0);
 }
