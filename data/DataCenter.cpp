@@ -6,6 +6,7 @@
 #include "../monsters/Monster.h"
 #include "../monsters/MonsterT.h"
 #include "../towers/Tower.h"
+#include "../towers/Tool.h"
 #include "../towers/Bullet.h"
 #include "../Hero.h"
 #include "../Camera.h"
@@ -13,9 +14,9 @@
 // fixed settings
 namespace DataSetting {
 	constexpr double FPS = 60;
-	constexpr int window_width = 800;
-	constexpr int window_height = 600;
-	constexpr int game_field_length = 600;
+	constexpr int window_width = 1280;
+	constexpr int window_height = 720;
+	constexpr int game_field_length = 1000;
 }
 
 DataCenter::DataCenter() {
@@ -47,16 +48,24 @@ DataCenter::~DataCenter() {
 	for(Tower *&t : towers) {
 		delete t;
 	}
-	for(Bullet *&b : towerBullets) {
+	for(Tool *&t : tools) {
+		delete t;
+	}
+	for(Bullet *&b : bullets) {
 		delete b;
 	}
 }
 
 void DataCenter::reset_bullet() {
 	monster = nullptr;
-	for(size_t i = 0; i < towerBullets.size(); ++i) {
-		delete towerBullets[i];
-		towerBullets.erase(towerBullets.begin() + i);
+	for(size_t i = 0; i < bullets.size(); ++i) {
+		delete bullets[i];
+		bullets.erase(bullets.begin() + i);
+		--i;
+	}
+	for (size_t i = 0; i < tools.size(); ++i) {
+		delete tools[i];
+		tools.erase(tools.begin() + i);
 		--i;
 	}
 }

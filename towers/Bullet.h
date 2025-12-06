@@ -2,6 +2,9 @@
 #define BULLET_H_INCLUDED
 
 #include "../Object.h"
+#include "Tool.h"
+#include "../shapes/Line.h"
+#include "../shapes/Circle.h"
 #include <allegro5/bitmap.h>
 #include <string>
 
@@ -10,15 +13,22 @@
  * @see Tower
  */
 
-enum BulletState{
+enum class BulletState{ // 使用 enum class 比較安全
     BALL,
     SOLID,
     LIQUID,
     GAS,
 	POSITIVE,
 	NEGATIVE,
+	LASER,
+	SOUND,
     BULLETSTATE_MAX
 };
+// enum class WaveType{
+// 	LASER,
+// 	SOUND,
+// 	WAVETYPE_MAX
+// };
 
 class Bullet : public Object
 {
@@ -29,6 +39,12 @@ public:
 	void draw();
 	const double &get_fly_dist() const { return fly_dist; }
 	const int &get_dmg() const { return dmg; }
+	const BulletState get_state() { return state; }
+	void update_matter(BulletState collid_matter); // 剪刀石頭布
+	void update_force(Point force_source); // 處理引力與斥力
+	bool update_electrode(BulletState collid_electrode); // 正負極碰撞的時候要爆炸
+	bool update_wave(int x, int y, double z, ToolType type); // 子彈碰到道具要轉彎
+	Circle force_shape; // 放 public 有點不安全，要考慮改成 private
 private:
 	/**
 	 * @brief Velocity in x direction.

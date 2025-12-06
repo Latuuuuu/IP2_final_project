@@ -22,5 +22,5 @@ void Monster3::attack() {
 							   t.y * max(graph_h, graph_w) + shape->center_y());
 		atk = new Bullet(p, t, "assets/image/tower/Arcane_Beam.png", 480, 20, 500);
 	}
-	DC->towerBullets.emplace_back(atk);
+	DC->bullets.emplace_back(atk);
 }

@@ -14,6 +14,7 @@ class Monster;
 class MonsterT;
 class Tower;
 class Bullet;
+class Tool;
 class Hero;
 class Camera;
 
@@ -94,11 +95,15 @@ public:
 	 * @see Tower
 	 */
 	std::vector<Tower*> towers;
+	std::vector<Tool*> tools;
 	/**
 	 * @brief Raw list of Bullet objects.
 	 * @see Bullet
 	 */
-	std::vector<Bullet*> towerBullets;
+	std::vector<Bullet*> bullets;
+	std::vector<Bullet*> matterBullets;
+	std::vector<Bullet*> electrodeBullets;
+	std::vector<Bullet*> waveBullets;
 
 	Hero *hero;
 	Camera *camera;

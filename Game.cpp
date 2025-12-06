@@ -221,19 +221,19 @@ bool Game::game_update() {
 			button = ui_levels->update();
 			// std::cout << button << std::endl;
 			if (button == 0) {
-				DC->hero->init();
+				DC->hero->init(1);
 				DC->level->load_level(1);
 				state = STATE::LEVEL1;
 			} else if (button == 1) {
-				DC->hero->init();
+				DC->hero->init(2);
 				DC->level->load_level(2);
 				state = STATE::LEVEL2;
 			} else if (button == 2) {
-				DC->hero->init();
+				DC->hero->init(3);
 				DC->level->load_level(3);
 				state = STATE::LEVEL3;
 			} else if (button == 3) {
-				DC->hero->init();
+				DC->hero->init(4);
 				DC->level->load_level(4);
 				state = STATE::LEVEL4;
 			} else if (button == 4) {
@@ -255,7 +255,7 @@ bool Game::game_update() {
 			if (DC->level->get_monster_dead()) {
 				debug_log("<Game> state: change to LEVEL2\n");
 				DC->reset_bullet();
-				DC->hero->init();
+				DC->hero->init(0);
 				DC->level->load_level(2);
 				state = STATE::LEVEL2;
 			}
@@ -280,7 +280,7 @@ bool Game::game_update() {
 			if (DC->level->get_monster_dead()) {
 				debug_log("<Game> state: change to LEVLE3\n");
 				DC->reset_bullet();
-				DC->hero->init();
+				DC->hero->init(0);
 				DC->level->load_level(3);
 				state = STATE::LEVEL3;
 			}
@@ -305,7 +305,7 @@ bool Game::game_update() {
 			if (DC->level->get_monster_dead()) {
 				debug_log("<Game> state: change to LEVEL4\n");
 				DC->reset_bullet();
-				DC->hero->init();
+				DC->hero->init(0);
 				DC->level->load_level(4);
 				state = STATE::LEVEL4;
 			}
@@ -340,16 +340,16 @@ bool Game::game_update() {
 			break;
 		} case STATE::PAUSE: {
 			int button = ui_pause->update();
-			if ((DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) || button == 0) {
+			if ((DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) || button == 0) { // resume
 				SC->toggle_playing(background);
 				debug_log("<Game> state: change to last state\n");
 				state = last_state;
-			} else if (button == 1) {
+			} else if (button == 1) { // restart
 				DC->reset_bullet();
-				DC->hero->init();
+				DC->hero->init(level_map[last_state]);
 				DC->level->load_level(level_map[last_state]);
 				state = last_state;
-			} else if (button == 2) {
+			} else if (button == 2) { // to menu
 				DC->reset_bullet();
 				state = STATE::MENU;
 			}
@@ -426,9 +426,9 @@ Game::game_draw() {
 			al_draw_bitmap(background, 0, 0, 0);
 			ui_levels->draw();
 		} else if(state == STATE::LEVEL1 || state == STATE::LEVEL2 || state == STATE::LEVEL3 || state == STATE::LEVEL4) {
-			al_draw_bitmap(background,
-							DC->camera->transform_bitmap(0, 0).center_x(),
-							DC->camera->transform_bitmap(0, 0).center_y(), 0);
+			// al_draw_bitmap(background,
+			// 				DC->camera->transform_bitmap(0, 0).center_x(),
+			// 				DC->camera->transform_bitmap(0, 0).center_y(), 0);
 			DC->camera->update_camera(Point(DC->hero->shape->center_x(),
 											DC->hero->shape->center_y()), 
 									Point(0, 0));

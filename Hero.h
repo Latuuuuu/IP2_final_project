@@ -19,42 +19,41 @@ enum SkillState{
     NORMAL,
     SLG, //solid liguid gas
     ELECTRIC,
+    WAVE
 };
-
-// enum BulletState{
-//     BALL,
-//     SOLID,
-//     LIQUID,
-//     GAS,
-//     BULLETSTATE_MAX
-
-// };
 
 class OperationCenter;
 
 class Hero : public Object{
 public:
-    void init();
+    void init(int lvl);
     void update();
     void draw() override;
     const int &get_dmg() const { return dmg; }
     const Point get_size() { return size; }
+    const int get_max_tool_num() { return max_tool_num; }
     friend class OperationCenter;
     int HP;
     void change_skill_state(SkillState new_state){skill_state = new_state;};
     bool all_skill = true; //全技能開關
 private:
     void jump_back(Point obj_point);
+    void draw_tool_icon();
     HeroState state = HeroState::FRONT;
     SkillState skill_state = SkillState::NORMAL;
     BulletState bullet_state = BulletState::BALL;
+    ToolType tool_type = ToolType::CONCAVE;
     std::map<HeroState, std::string> gifPath;
     std::map<BulletState, std::string> bullet_gifPath;
     Point size;
+    double tool_angle;
     double speed = 5.0;
+    int cd_time = 10;
     int shift_timer = 0,mouse_l_timer = 0;
     int dmg;
     bool is_collid;
+    int max_tool_num;
+    int level;
 };
 
 #endif

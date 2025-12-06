@@ -27,15 +27,19 @@ private:
 private:
 	void _update_monster();
 	void _update_tower();
-	void _update_towerBullet();
-	void _update_hero_towerBullet();
-	void _update_monster_towerBullet();
-	// void _update_monster_player();
+	void _update_tool();
+	void _update_bullet();
+	void _update_hero_bullet();
+	void _update_monster_bullet();
+	void _update_bullet_bullet();
+	void _update_tool_bullet();
+	void _update_tool_others();
 	void _update_monster_hero();
 private:
 	void _draw_monster();
 	void _draw_tower();
-	void _draw_towerBullet();
+	void _draw_bullet();
+	void _draw_tool();
 };
 
 #endif

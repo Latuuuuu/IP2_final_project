@@ -83,7 +83,7 @@ Tower::attack(Object *target) {
 	if(!target->shape->overlap(*shape)) return false;
 	DataCenter *DC = DataCenter::get_instance();
 	SoundCenter *SC = SoundCenter::get_instance();
-	DC->towerBullets.emplace_back(create_bullet(target));
+	DC->bullets.emplace_back(create_bullet(target));
 	SC->play(TowerSetting::attack_sound_path, ALLEGRO_PLAYMODE_ONCE);
 	counter = attack_freq;
 	return true;

@@ -1,27 +1,15 @@
 #include "LevelT.h"
-#include <string>
 #include "Utils.h"
 #include "Hero.h"
 #include "monsters/MonsterT.h"
 #include "data/DataCenter.h"
+#include "data/ImageCenter.h"
 #include "Camera.h"
-#include <allegro5/allegro_primitives.h>
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
-#include <array>
 #include <iostream>
 
 using namespace std;
-
-// fixed settings
-namespace LevelSetting {
-	constexpr char level_path_format[] = "./assets/level/LEVEL%d.txt";
-	//! @brief Grid size for each level.
-	constexpr array<int, 4> grid_size = {
-		40, 40, 40, 40
-	};
-	constexpr int monster_spawn_rate = 90;
-};
 
 void
 LevelT::init() {
@@ -48,13 +36,10 @@ void LevelT::load_level(int lvl) {
 	FILE *f = fopen(buffer, "r");
 	GAME_ASSERT(f != nullptr, "cannot find level.");
 	level = lvl;
-	// grid_w = DC->game_field_length / LevelSetting::grid_size[lvl];
-	// grid_h = DC->game_field_length / LevelSetting::grid_size[lvl];
 	is_puzzle_solved = false;
 	is_monster_spawn = false;
 	is_monster_dead = false;
-	arena_entry = DC->game_field_length / 2.0;
-	spawn_position = Point(DC->game_field_length, DC->game_field_length);
+	spawn_position = Point(LevelSetting::monster_spawn_x[lvl-1], DC->window_height / 2);
 	// setup puzzle
 }
 
@@ -66,9 +51,10 @@ void LevelT::update1() {
 	if (!is_puzzle_solved) {
 		// update puzzle
 		is_puzzle_solved = true;
-	} else if (DC->get_instance()->monster != nullptr || !is_monster_spawn) {
+	}
+	if (DC->get_instance()->monster != nullptr || !is_monster_spawn) {
 		// update arena
-		if (DC->hero->shape->center_x() > this->arena_entry && !is_monster_spawn) {
+		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[0] && !is_monster_spawn) {
 			// init monster for this level
 			// cout << "create monster" << endl;
 			DC->monster = MonsterT::create_monster(MonsterType::MONSTER1, this->spawn_position);
@@ -85,9 +71,10 @@ void LevelT::update2() {
 	if (!is_puzzle_solved) {
 		// update puzzle
 		is_puzzle_solved = true;
-	} else if (DC->monster != nullptr || !is_monster_spawn) {
+	}
+	if (DC->monster != nullptr || !is_monster_spawn) {
 		// update arena
-		if (DC->hero->shape->center_x() > this->arena_entry && !is_monster_spawn) {
+		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[1] && !is_monster_spawn) {
 			// init monster for this level
 			DC->monster = MonsterT::create_monster(MonsterType::MONSTER2, this->spawn_position);
 			is_monster_spawn = true;
@@ -99,12 +86,13 @@ void LevelT::update2() {
 
 void LevelT::update3() {
 	DataCenter *DC = DataCenter::get_instance();
-	if (!is_puzzle_solved) {
+	if (!is_puzzle_solved) { // 解謎遊戲還沒完成
 		// update puzzle
-		is_puzzle_solved = true;
-	} else if (DC->monster != nullptr || !is_monster_spawn) {
+		is_puzzle_solved = true; // 會決定角色是否獲得技能
+	} 
+	if (DC->monster != nullptr || !is_monster_spawn) { // 怪獸還沒死(已經生成) 或 怪獸還沒生成(還沒離開解謎區)
 		// update arena
-		if (DC->hero->shape->center_x() > this->arena_entry && !is_monster_spawn) {
+		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[2] && !is_monster_spawn) {
 			// init monster for this level
 			DC->monster = MonsterT::create_monster(MonsterType::MONSTER3, this->spawn_position);
 			is_monster_spawn = true;
@@ -119,9 +107,10 @@ void LevelT::update4() {
 	if (!is_puzzle_solved) {
 		// update puzzle
 		is_puzzle_solved = true;
-	} else if (DC->monster != nullptr || !is_monster_spawn) {
+	}
+	if (DC->monster != nullptr || !is_monster_spawn) {
 		// update arena
-		if (DC->hero->shape->center_x() > this->arena_entry && !is_monster_spawn) {
+		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[3] && !is_monster_spawn) {
 			// init monster for this level
 			DC->monster = MonsterT::create_monster(MonsterType::MONSTER4, this->spawn_position);
 			is_monster_spawn = true;
@@ -132,28 +121,86 @@ void LevelT::update4() {
 }
 
 void LevelT::draw() {
-	// DataCenter *DC = DataCenter::get_instance();
+	DataCenter *DC = DataCenter::get_instance();
+	ImageCenter *IC = ImageCenter::get_instance();
 	Point p;
 	if(level == -1) return;
+	background = IC->get(LevelSetting::lvl_background_path[level-1]);
+
+	for (size_t i = 0; i < 4; ++i) {
+		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[i]) {
+			al_draw_bitmap(background,
+						DC->camera->transform_bitmap(0, 0).center_x(),
+						DC->camera->transform_bitmap(0, 0).center_y(), 0);
+			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(-640, 0).center_x(),
+						DC->camera->transform_bitmap(-640, 0).center_y(), 0);
+		}
+		if (DC->hero->shape->center_x() > LevelSetting::lvl_bound_x[i] - 640) {
+			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(-640, 0).center_x(),
+						DC->camera->transform_bitmap(-640, 0).center_y(), 0);
+			al_draw_bitmap(background,
+						DC->camera->transform_bitmap(0, 0).center_x(),
+						DC->camera->transform_bitmap(0, 0).center_y(), 0);
+		}
+	}
+
 	switch (level) {
 	case 1:
-		// draw puzzle items
 		// draw background
+		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(-640, 0).center_x(),
+						DC->camera->transform_bitmap(-640, 0).center_y(), 0);
+		al_draw_bitmap(background,
+						DC->camera->transform_bitmap(0, 0).center_x(),
+						DC->camera->transform_bitmap(0, 0).center_y(), 0);
+		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(2560, 0).center_x(),
+						DC->camera->transform_bitmap(2560, 0).center_y(), 0);
+		// draw puzzle items
 		// draw arena items
 		break;
 	case 2:
-		// draw puzzle items
 		// draw background
+		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(2560, 0).center_x(),
+						DC->camera->transform_bitmap(2560, 0).center_y(), 0);
+		al_draw_bitmap(background,
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0], 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0], 0).center_y(), 0);
+		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0]+2560, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0]+2560, 0).center_y(), 0);
+		// draw puzzle items
 		// draw arena items
 		break;
 	case 3:
-		// draw puzzle items
 		// draw background
+		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0]+2560, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0]+2560, 0).center_y(), 0);
+		al_draw_bitmap(background,
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1], 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1], 0).center_y(), 0);
+		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1]+2560, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1]+2560, 0).center_y(), 0);
+		// draw puzzle items
 		// draw arena items
 		break;
 	case 4:
-		// draw puzzle items
 		// draw background
+		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1]+2560, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1]+2560, 0).center_y(), 0);
+		al_draw_bitmap(background,
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[2], 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[2], 0).center_y(), 0);
+		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[2]+2560, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[2]+2560, 0).center_y(), 0);
+		// draw puzzle items
 		// draw arena items
 		break;
 	default:

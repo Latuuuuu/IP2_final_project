@@ -4,9 +4,10 @@
 class Point;
 class Rectangle;
 class Circle;
+class Line;
 
 enum class ShapeType {
-	POINT, RECTANGLE, CIRCLE
+	POINT, RECTANGLE, CIRCLE, LINE
 };
 
 /**
