@@ -102,6 +102,7 @@ SoundCenter::play(const string &path, ALLEGRO_PLAYMODE mode) {
 
 	al_set_sample_instance_playmode(instance, mode);
 	al_attach_sample_instance_to_mixer(instance, al_get_default_mixer());
+	al_set_sample_instance_gain(instance, gain);
 	al_play_sample_instance(instance);
 	return instance;
 }

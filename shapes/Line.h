@@ -4,6 +4,7 @@
 #include "Shape.h"
 #include "Point.h"
 #include <cmath>
+#include <iostream>
 
 /**
  * @see Shape.cpp
@@ -32,6 +33,7 @@ public:
 		v.y = y2 - anchor.center_y();
 		x2 = std::cos(z)*v.x-std::sin(z)*v.y + anchor.center_x();
 		y2 = std::sin(z)*v.x+std::cos(z)*v.y + anchor.center_y();
+		std::cout << x1 << " " << y1 << ", " << x2 << " " << y2 << std::endl;
 	}
 	const ShapeType getType() const { return ShapeType::LINE; }
 public:

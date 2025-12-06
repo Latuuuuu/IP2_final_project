@@ -19,8 +19,12 @@ void OperationCenter::update() {
 	_update_tool();
 	// If any bullet overlaps with any monster, we delete the bullet, reduce the HP of the monster, and delete the monster if necessary.
 	_update_monster_bullet();
+	_update_hero_bullet();
 	// If any monster hits hero, monster dies. 
 	_update_monster_hero();
+	_update_bullet_bullet();
+	// _update_tool_bullet();
+	// _update_tool_others();
 }
 
 void OperationCenter::_update_monster() {

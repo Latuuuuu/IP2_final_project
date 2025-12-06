@@ -46,6 +46,7 @@ private:
     std::map<HeroState, std::string> gifPath;
     std::map<BulletState, std::string> bullet_gifPath;
     Point size;
+    Point tool_place;
     double tool_angle;
     double speed = 5.0;
     int cd_time = 10;

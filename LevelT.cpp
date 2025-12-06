@@ -125,81 +125,53 @@ void LevelT::draw() {
 	ImageCenter *IC = ImageCenter::get_instance();
 	Point p;
 	if(level == -1) return;
-	background = IC->get(LevelSetting::lvl_background_path[level-1]);
 
 	for (size_t i = 0; i < 4; ++i) {
-		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[i]) {
-			al_draw_bitmap(background,
-						DC->camera->transform_bitmap(0, 0).center_x(),
-						DC->camera->transform_bitmap(0, 0).center_y(), 0);
+		if (DC->hero->shape->center_x() > LevelSetting::lvl_bound_x[i] && DC->hero->shape->center_x() < LevelSetting::puzzle_bound_x[i]) {
+			background = IC->get(LevelSetting::lvl_background_path[i]);
 			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(-640, 0).center_x(),
-						DC->camera->transform_bitmap(-640, 0).center_y(), 0);
-		}
-		if (DC->hero->shape->center_x() > LevelSetting::lvl_bound_x[i] - 640) {
-			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(-640, 0).center_x(),
-						DC->camera->transform_bitmap(-640, 0).center_y(), 0);
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_y(), 0);
 			al_draw_bitmap(background,
-						DC->camera->transform_bitmap(0, 0).center_x(),
-						DC->camera->transform_bitmap(0, 0).center_y(), 0);
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_y(), 0);
+		} else if (DC->hero->shape->center_x() >= LevelSetting::puzzle_bound_x[i] && DC->hero->shape->center_x() < LevelSetting::lvl_bound_x[i+1] - 640) {
+			background = IC->get(LevelSetting::lvl_background_path[i]);
+			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1]-640, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1]-640, 0).center_y(), 0);
+			al_draw_bitmap(background,
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_y(), 0);
+		} else if (DC->hero->shape->center_x() >= LevelSetting::lvl_bound_x[i+1] - 640 && DC->hero->shape->center_x() < LevelSetting::lvl_bound_x[i+1]) {
+			background = IC->get(LevelSetting::lvl_background_path[i]);
+			al_draw_bitmap(background,
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_y(), 0);
+			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1]-640, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1]-640, 0).center_y(), 0);
+			background = IC->get(LevelSetting::lvl_background_path[i+1]);
+			al_draw_bitmap(background,
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1], 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1], 0).center_y(), 0);
 		}
 	}
 
 	switch (level) {
 	case 1:
-		// draw background
-		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(-640, 0).center_x(),
-						DC->camera->transform_bitmap(-640, 0).center_y(), 0);
-		al_draw_bitmap(background,
-						DC->camera->transform_bitmap(0, 0).center_x(),
-						DC->camera->transform_bitmap(0, 0).center_y(), 0);
-		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(2560, 0).center_x(),
-						DC->camera->transform_bitmap(2560, 0).center_y(), 0);
 		// draw puzzle items
 		// draw arena items
 		break;
 	case 2:
-		// draw background
-		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(2560, 0).center_x(),
-						DC->camera->transform_bitmap(2560, 0).center_y(), 0);
-		al_draw_bitmap(background,
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0], 0).center_x(),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0], 0).center_y(), 0);
-		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0]+2560, 0).center_x(),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0]+2560, 0).center_y(), 0);
 		// draw puzzle items
 		// draw arena items
 		break;
 	case 3:
-		// draw background
-		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0]+2560, 0).center_x(),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[0]+2560, 0).center_y(), 0);
-		al_draw_bitmap(background,
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1], 0).center_x(),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1], 0).center_y(), 0);
-		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1]+2560, 0).center_x(),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1]+2560, 0).center_y(), 0);
 		// draw puzzle items
 		// draw arena items
 		break;
 	case 4:
-		// draw background
-		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1]+2560, 0).center_x(),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[1]+2560, 0).center_y(), 0);
-		al_draw_bitmap(background,
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[2], 0).center_x(),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[2], 0).center_y(), 0);
-		al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[2]+2560, 0).center_x(),
-						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[2]+2560, 0).center_y(), 0);
 		// draw puzzle items
 		// draw arena items
 		break;
