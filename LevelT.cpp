@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
+#include "towers/Block.h"
 #include <iostream>
 
 using namespace std;
@@ -49,8 +50,18 @@ void LevelT::load_level(int lvl) {
 void LevelT::update1() {
 	DataCenter *DC = DataCenter::get_instance();
 	if (!is_puzzle_solved) {
-		// update puzzle
-		is_puzzle_solved = true;
+		if(!block_timer){
+			int rand_state = distribution(generator) % 3;
+			int rand_x = distribution(generator) % 14;
+			int rand_y = rand_x % 2 ? 0 : 1280;
+			Block *block = new Block(Point(block_x[rand_x], rand_y), (rand_y ? -1 : 1) * (200+40*rand_x), static_cast<BlockState>(rand_state));
+			DC->blocks.push_back(block);
+			std::cout << "create block" << std::endl;
+			block_timer = 15;
+		}else{
+			block_timer--;
+		}
+		// is_puzzle_solved = true;
 	}
 	if (DC->get_instance()->monster != nullptr || !is_monster_spawn) {
 		// update arena

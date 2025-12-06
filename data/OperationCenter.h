@@ -35,11 +35,14 @@ private:
 	void _update_tool_bullet();
 	void _update_tool_others();
 	void _update_monster_hero();
+	void _update_block();
+	void _update_hero_block();
 private:
 	void _draw_monster();
 	void _draw_tower();
 	void _draw_bullet();
 	void _draw_tool();
+	void _draw_block();
 };
 
 #endif

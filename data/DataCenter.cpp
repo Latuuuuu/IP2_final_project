@@ -10,6 +10,7 @@
 #include "../towers/Bullet.h"
 #include "../Hero.h"
 #include "../Camera.h"
+#include "../towers/Block.h"
 
 // fixed settings
 namespace DataSetting {
@@ -52,6 +53,9 @@ DataCenter::~DataCenter() {
 		delete t;
 	}
 	for(Bullet *&b : bullets) {
+		delete b;
+	}
+	for(Block *&b : blocks) {
 		delete b;
 	}
 }

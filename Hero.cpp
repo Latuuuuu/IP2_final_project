@@ -8,6 +8,7 @@
 #include "data/ImageCenter.h"
 #include "shapes/Rectangle.h"
 #include <iostream>
+#include <allegro5/allegro_primitives.h>
 
 namespace HeroSetting {
 	static constexpr char hero_imgs_root_path[40] = "./assets/gif/Hero";
@@ -24,17 +25,35 @@ namespace BulletSetting {
 }
 
 void Hero::init(int lvl) {
-    for(size_t type = 0; type < static_cast<size_t>(HeroState::HEROSTATE_MAX); ++type){
-        gifPath[static_cast<HeroState>(type)] = std::string(HeroSetting::hero_imgs_root_path) + "/dragonite_"+ HeroSetting::dir_path_postfix[type] + ".gif";
+    all_skin_paths.resize(10);
+
+    std::vector<std::string> bullet_prefixes= { "slime", "ice", "water", "vapor"};
+    for (int s = 0; s < (int)bullet_prefixes.size(); ++s) {
+        all_skin_paths[s].resize(static_cast<int>(HeroState::HEROSTATE_MAX));
+        
+        for (int d = 0; d < static_cast<int>(HeroState::HEROSTATE_MAX); ++d) {
+            std::string path = std::string(HeroSetting::hero_imgs_root_path) + "/" + 
+                               bullet_prefixes[s] + "_" + 
+                               HeroSetting::dir_path_postfix[d] + ".gif";
+            all_skin_paths[s][d] = path;
+            GIFCenter::get_instance()->get(path);
+        }
     }
+    // initial slime skin
+    for(int d = 0; d < 4; d++) {
+        gifPath[static_cast<HeroState>(d)] = all_skin_paths[0][d];
+    }
+    // for(size_t type = 0; type < static_cast<size_t>(HeroState::HEROSTATE_MAX); ++type){
+    //     gifPath[static_cast<HeroState>(type)] = std::string(HeroSetting::hero_imgs_root_path) + "/slime_"+ HeroSetting::dir_path_postfix[type] + ".gif";
+    // }
     for(size_t type = 0; type < static_cast<size_t>(BulletState::BULLETSTATE_MAX); ++type){
         bullet_gifPath[static_cast<BulletState>(type)] = std::string(BulletSetting::hero_imgs_root_path) + "/" + BulletSetting::dir_path_postfix[type] + ".png";
     }
     GIFCenter *GIFC = GIFCenter::get_instance();
     ALGIF_ANIMATION *gif = GIFC->get(gifPath[state]);
     DataCenter *DC = DataCenter::get_instance();
-    size.x = gif->width;
-    size.y = gif->height;
+    size.x = gif->width*0.3;
+    size.y = gif->height*0.3;
     this->dmg = 50;
     this->HP = 500;
     is_collid = false;
@@ -49,8 +68,8 @@ void Hero::init(int lvl) {
     }
     this->level = lvl;
     shape.reset(new Rectangle{
-        LevelSetting::hero_spawn_x[lvl-1] , DC->window_height / 2 ,
-        LevelSetting::hero_spawn_x[lvl-1] + gif->width, DC->window_height / 2 + gif->height
+        -100 - size.x / 2 , DC->window_height / 2 - size.y / 2,//LevelSetting::hero_spawn_x[lvl-1]
+        -100 + size.x / 2, DC->window_height / 2 + size.y / 2
     });
 }
 
@@ -59,14 +78,23 @@ void Hero::jump_back(Point obj_point) {
     shape->update_center_y(shape->center_y() * 2 - obj_point.center_y());
 }
 
+void Hero::apply_skin(int idx) {
+    for(int i = 0; i < 4; i++) {
+        gifPath[static_cast<HeroState>(i)] = all_skin_paths[idx][i];
+    }
+}
+
 void Hero::update() {
+    std::cout << "Hero HP: " << HP << "\n";
     DataCenter *DC = DataCenter::get_instance();
     if (all_skill) {//技能組切換
         if (DC->key_state[ALLEGRO_KEY_1] && !DC->prev_key_state[ALLEGRO_KEY_1]) { 
             if (skill_state == SkillState::SLG) {
+                apply_skin(0);
                 skill_state = SkillState::NORMAL;
                 bullet_state = BulletState::BALL;
             } else {
+                apply_skin(2);
                 skill_state = SkillState::SLG;
                 bullet_state = BulletState::LIQUID;
             }
@@ -80,6 +108,7 @@ void Hero::update() {
             }
         } else if (DC->key_state[ALLEGRO_KEY_3] && !DC->prev_key_state[ALLEGRO_KEY_3]) {
             if (skill_state == SkillState::ELECTRIC) {
+                apply_skin(0);
                 skill_state = SkillState::NORMAL;
                 bullet_state = BulletState::BALL;
             } else {
@@ -97,7 +126,7 @@ void Hero::update() {
     }
 
     if(shift_timer >= 0){ //shift 加速 timer
-        if(shift_timer<=50) speed = 5.0;
+        if(shift_timer<=45) speed = 200.0;
         shift_timer--;
     }
     if(mouse_l_timer >= 0){ //left mouse 普攻 timer
@@ -107,21 +136,25 @@ void Hero::update() {
     if(DC->key_state[ALLEGRO_KEY_LSHIFT] && shift_timer<=0){ //shift 加速
         std :: cout << "fast!\n";
         shift_timer = 60;
-        speed = 10.0;
+        speed = 400.0;
     }
 
     if (DC->mouse_state[2] && !DC->prev_mouse_state[2]) { //右鍵切換形態
         if (skill_state == SkillState::SLG) { //三態變化技
             if (bullet_state == BulletState::SOLID) {
+                apply_skin(2);
                 bullet_state = BulletState::LIQUID;
                 std :: cout << "to liquid!\n";
             } else if (bullet_state == BulletState::LIQUID) {
+                apply_skin(3);
                 bullet_state = BulletState::GAS;
                 std :: cout << "to gas!\n";
             } else if (bullet_state == BulletState::GAS) {
+                apply_skin(1);
                 bullet_state = BulletState::SOLID;
                 std :: cout << "to solid!\n";
             } else {
+                apply_skin(2);
                 bullet_state = BulletState::LIQUID;
                 std :: cout << "to solid!\n";
             }
@@ -148,7 +181,7 @@ void Hero::update() {
         }
     }
     
-    if(DC->mouse_state[1] && !DC->prev_mouse_state[1] && mouse_l_timer <= 0){ //左鍵普攻 
+    if(DC->mouse_state[1] && mouse_l_timer <= 0){ //左鍵普攻 
         mouse_l_timer = cd_time;
         if (skill_state == SkillState::WAVE) {
             bullet_state = BulletState::LASER;
@@ -166,22 +199,29 @@ void Hero::update() {
         return;
     }
     if(DC->key_state[ALLEGRO_KEY_W]){ //上下左右
-        shape->update_center_y(shape->center_y() - speed);
+        speed_y = -speed;
         state = HeroState::BACK;
     }else if(DC->key_state[ALLEGRO_KEY_A]){
-        shape->update_center_x(shape->center_x() - speed);
+        speed_x = -speed;
         state = HeroState::LEFT;
     }else if(DC->key_state[ALLEGRO_KEY_S]){
-        shape->update_center_y(shape->center_y() + speed);
+        speed_y = speed;
         state = HeroState::FRONT;
     }else if(DC->key_state[ALLEGRO_KEY_D]){
-        shape->update_center_x(shape->center_x() + speed);
+        speed_x = speed;
         state = HeroState::RIGHT;
     }
+    shape->update_center_x(shape->center_x() + (speed_x + adjust_speed_x) / DC->FPS);
+    shape->update_center_y(shape->center_y() + (speed_y + adjust_speed_y) / DC->FPS);
+    speed_x = 0.0;
+    speed_y = 0.0;
+    adjust_speed_x = 0.0; //歸零速度調整
+    adjust_speed_y = 0.0; //歸零速度調整
 }
 
 void Hero::draw() {
     DataCenter *DC = DataCenter::get_instance();
+    // std::cout << "Hero X: " << DC->hero->shape->center_x() << " | Hero Y: " << DC->hero->shape->center_y() << std::endl; //測試用
     GIFCenter *GIFC = GIFCenter::get_instance();
     ALGIF_ANIMATION *gif = GIFC->get(gifPath[state]);
     Point offset = DC->camera->transform_object(*shape);
@@ -193,6 +233,13 @@ void Hero::draw() {
     );
     if (skill_state == SkillState::WAVE)
         draw_tool_icon();
+    // 測hitbox用 
+    // al_draw_rectangle(
+    //     offset.center_x() - size.x / 2.0,
+    //     offset.center_y() - size.y / 2.0,
+    //     offset.center_x() + size.x / 2.0,
+    //     offset.center_y() + size.y / 2.0,
+    //     al_map_rgb(255, 0, 0), 1.0);
 }
 
 void Hero::draw_tool_icon() {

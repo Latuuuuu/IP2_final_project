@@ -5,6 +5,7 @@
 #include "../shapes/Point.h"
 #include <algorithm>
 #include <allegro5/bitmap_draw.h>
+#include <allegro5/allegro_primitives.h>
 
 Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, double v, int dmg, double fly_dist) {
 	ImageCenter *IC = ImageCenter::get_instance();
@@ -12,7 +13,7 @@ Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, dou
 	this->fly_dist = fly_dist;
 	this->dmg = dmg;
 	bitmap = IC->get(path);
-	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.8;
+	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.25;
 	shape.reset(new Circle{p.x, p.y, r});
 	double d = Point::dist(vector);
 	vx = vector.x * v / d;
@@ -26,7 +27,7 @@ Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, dou
 	this->fly_dist = fly_dist;
 	this->dmg = dmg;
 	bitmap = IC->get(path);
-	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.8;
+	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) *0.25;
 	shape.reset(new Circle{p.x, p.y, r});
 	double d = Point::dist(vector);
 	vx = vector.x * v / d;
@@ -104,4 +105,11 @@ void Bullet::draw() {
 		bitmap,
 		offset.center_x() - al_get_bitmap_width(bitmap) / 2,
 		offset.center_y() - al_get_bitmap_height(bitmap) / 2, 0);
+	// 測hitbox用 
+	// double width = al_get_bitmap_width(bitmap) *0.25;
+	// al_draw_circle(
+    //     offset.center_x(),
+    //     offset.center_y(),
+    //     width,
+    //     al_map_rgb(255, 0, 0), 1.0);
 }

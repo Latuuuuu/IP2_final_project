@@ -9,6 +9,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <array>
 #include <string>
+#include <random>
 
 // fixed settings
 namespace LevelSetting {
@@ -82,6 +83,10 @@ private:
 	bool is_puzzle_solved;
 	bool is_monster_dead;
 	bool is_monster_spawn;
+	int block_timer = 0;
+	std::mt19937 generator;
+	std::uniform_int_distribution<int> distribution{1, 30};
+	int block_x[14] = {68, 156, 244, 332, 420, 508, 596, 684, 772, 860, 948, 1036, 1124, 1212} ;
 };
 
 #endif

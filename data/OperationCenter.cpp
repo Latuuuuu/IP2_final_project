@@ -4,6 +4,7 @@
 #include "../monsters/MonsterT.h"
 #include "../towers/Tower.h"
 #include "../towers/Bullet.h"
+#include "../towers/Block.h"
 #include "../Player.h"
 #include "../Hero.h"
 #include <iostream>
@@ -21,6 +22,10 @@ void OperationCenter::update() {
 	_update_monster_bullet();
 	// If any monster hits hero, monster dies. 
 	_update_monster_hero();
+
+	_update_block();
+
+	_update_hero_block();
 }
 
 void OperationCenter::_update_monster() {
@@ -60,6 +65,20 @@ void OperationCenter::_update_tool() {
 	if ((int)tools.size() > max_tool) { // pop out oldest tool if there's too many tools
 		delete tools[0];
 		tools.erase(tools.begin());
+	}
+}
+
+void OperationCenter::_update_block() {
+	std::vector<Block*> &blocks = DataCenter::get_instance()->blocks;
+	for(size_t j = 0; j < blocks.size(); ++j){
+		if(!blocks[j]->alive){
+			delete blocks[j];
+			blocks.erase(blocks.begin() + j);
+			continue;
+		}
+		else{
+			blocks[j]->update();
+		}
 	}
 }
 
@@ -109,6 +128,19 @@ void OperationCenter::_update_hero_bullet() {
 			delete bullets[j];
 			bullets.erase(bullets.begin() + j);
 			--j;
+		}
+	}
+}
+
+void OperationCenter::_update_hero_block() {
+	DataCenter *DC = DataCenter::get_instance();
+	std::vector<Block*> &blocks = DC->blocks;
+	if (DC->hero == nullptr) return;
+	for (size_t j = 0; j < blocks.size(); ++j) {
+		// Check if the bullet overlaps with the monster.
+		if (DC->hero->shape->overlap(*(blocks[j]->shape))) {
+			// Reduce the HP of the monster. Delete the bullet.
+			blocks[j]->update_hero_hit(DC->hero->bullet_state);
 		}
 	}
 }
@@ -233,6 +265,7 @@ void OperationCenter::draw() {
 	_draw_tower();
 	_draw_tool();
 	_draw_bullet();
+	_draw_block();
 }
 
 void OperationCenter::_draw_monster() {
@@ -260,4 +293,10 @@ void OperationCenter::_draw_tool() {
 	std::vector<Tool*> &tools = DataCenter::get_instance()->tools;
 	for(Tool *tool : tools)
 		tool->draw();
+}
+
+void OperationCenter::_draw_block() {
+	std::vector<Block*> &blocks = DataCenter::get_instance()->blocks;
+	for(Block *block : blocks)
+		block->draw();
 }

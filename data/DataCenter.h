@@ -17,6 +17,7 @@ class Bullet;
 class Tool;
 class Hero;
 class Camera;
+class Block;
 
 /**
  * @brief Stores generic global data and relatively small data structures.
@@ -104,6 +105,12 @@ public:
 	std::vector<Bullet*> matterBullets;
 	std::vector<Bullet*> electrodeBullets;
 	std::vector<Bullet*> waveBullets;
+
+	/**
+	 * @brief Raw list of Block objects.
+	 * @see Block
+	 */
+	std::vector<Block*> blocks;
 
 	Hero *hero;
 	Camera *camera;

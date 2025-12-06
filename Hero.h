@@ -6,6 +6,7 @@
 #include "towers/Bullet.h" //為了拿共用的bullet state
 #include <map>
 #include <string>
+#include <vector>
 
 enum HeroState{
     LEFT,
@@ -36,7 +37,9 @@ public:
     int HP;
     void change_skill_state(SkillState new_state){skill_state = new_state;};
     bool all_skill = true; //全技能開關
+    void set_adjust_speed(double dx, double dy) { adjust_speed_x = dx; adjust_speed_y = dy; }
 private:
+    void apply_skin(int);
     void jump_back(Point obj_point);
     void draw_tool_icon();
     HeroState state = HeroState::FRONT;
@@ -44,10 +47,15 @@ private:
     BulletState bullet_state = BulletState::BALL;
     ToolType tool_type = ToolType::CONCAVE;
     std::map<HeroState, std::string> gifPath;
+    std::vector<std::vector<std::string>> all_skin_paths;
     std::map<BulletState, std::string> bullet_gifPath;
     Point size;
     double tool_angle;
-    double speed = 5.0;
+    double speed = 200.0;
+    double speed_x = 0.0;
+    double speed_y = 0.0;
+    double adjust_speed_x = 0.0;
+    double adjust_speed_y = 0.0;
     int cd_time = 10;
     int shift_timer = 0,mouse_l_timer = 0;
     int dmg;
