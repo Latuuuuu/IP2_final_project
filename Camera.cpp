@@ -6,7 +6,6 @@ using namespace std;
 Camera::Camera(int w, int h) {
     this->camera_x = w / 2.0;
     this->camera_y =  h / 2.0;
-    cout << this->camera_x << " " << this->camera_y << endl;
     this->w = w / 2.0;
     this->h = h / 2.0;
 }
