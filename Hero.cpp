@@ -62,8 +62,8 @@ void Hero::init(int lvl) {
     } else {
         this->level = lvl;
         shape.reset(new Rectangle{
-            LevelSetting::hero_spawn_x[lvl-1] - size.x / 2 , DC->window_height / 2 - size.y / 2,
-            LevelSetting::hero_spawn_x[lvl-1] + size.x / 2, DC->window_height / 2 + size.y / 2
+            60 - size.x / 2 , DC->window_height / 2 - size.y / 2,//LevelSetting::hero_spawn_x[lvl-1]
+            60 + size.x / 2, DC->window_height / 2 + size.y / 2
         });
     }
     if (this->level == 2 || this->level == 4)
@@ -81,6 +81,26 @@ void Hero::apply_skin(int idx) {
     for(int i = 0; i < 4; i++) {
         gifPath[static_cast<HeroState>(i)] = all_skin_paths[idx][i];
     }
+}
+
+void Hero::change_skill_state(SkillState new_state){
+    if(skill_state != new_state){
+        if(new_state == SkillState::NORMAL){
+        apply_skin(0);
+        bullet_state = BulletState::BALL;
+        }else if(new_state == SkillState::SLG){
+            apply_skin(2);
+            bullet_state = BulletState::LIQUID;
+        }
+        else if(new_state == SkillState::ELECTRIC){
+            bullet_state = BulletState::POSITIVE;
+        }
+        else if(new_state == SkillState::WAVE){
+            bullet_state = BulletState::LASER;
+        }
+        skill_state = new_state;
+    }
+    
 }
 
 void Hero::update() {

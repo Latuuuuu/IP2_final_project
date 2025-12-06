@@ -35,7 +35,7 @@ public:
     const int get_max_tool_num() { return max_tool_num; }
     friend class OperationCenter;
     int HP;
-    void change_skill_state(SkillState new_state){skill_state = new_state;};
+    void change_skill_state(SkillState new_state);
     bool all_skill = true; //全技能開關
     void set_adjust_speed(double dx, double dy) { adjust_speed_x = dx; adjust_speed_y = dy; }
 private:

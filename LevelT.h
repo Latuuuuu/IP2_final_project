@@ -86,7 +86,7 @@ private:
 	int block_timer = 0;
 	std::mt19937 generator;
 	std::uniform_int_distribution<int> distribution{1, 30};
-	int block_x[14] = {68, 156, 244, 332, 420, 508, 596, 684, 772, 860, 948, 1036, 1124, 1212} ;
+	int block_x[13] = {156, 244, 332, 420, 508, 596, 684, 772, 860, 948, 1036, 1124, 1212} ;//68
 };
 
 #endif

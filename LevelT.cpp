@@ -49,12 +49,13 @@ void LevelT::load_level(int lvl) {
 */
 void LevelT::update1() {
 	DataCenter *DC = DataCenter::get_instance();
+	DC->hero->change_skill_state(SkillState::SLG);
 	if (!is_puzzle_solved) {
 		if(!block_timer){
 			int rand_state = distribution(generator) % 3;
-			int rand_x = distribution(generator) % 14;
+			int rand_x = distribution(generator) % 13;
 			int rand_y = rand_x % 2 ? 0 : 1280;
-			Block *block = new Block(Point(block_x[rand_x], rand_y), (rand_y ? -1 : 1) * (200+40*rand_x), static_cast<BlockState>(rand_state));
+			Block *block = new Block(Point(block_x[rand_x], rand_y), (rand_y ? -1 : 1) * (150+50*rand_x), static_cast<BlockState>(rand_state));
 			DC->blocks.push_back(block);
 			std::cout << "create block" << std::endl;
 			block_timer = 15;
