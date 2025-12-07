@@ -62,6 +62,7 @@ void Bullet::update_matter(BulletState collid_matter) {  // 第一關子彈的�
 	    (this->state == BulletState::GAS && collid_matter == BulletState::LIQUID) ||
 		(this->state == BulletState::LIQUID && collid_matter == BulletState::SOLID)) {
 		this->dmg = 0;
+		this->alive = false;
 	} else if ((this->state == BulletState::GAS && collid_matter == BulletState::SOLID) ||
 			(this->state == BulletState::SOLID && collid_matter == BulletState::LIQUID) ||
 			(this->state == BulletState::LIQUID && collid_matter == BulletState::GAS)) {

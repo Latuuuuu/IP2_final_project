@@ -37,6 +37,7 @@ private:
 	void _update_monster_hero();
 	void _update_block();
 	void _update_hero_block();
+	void _update_bullet_block();
 private:
 	void _draw_monster();
 	void _draw_tower();

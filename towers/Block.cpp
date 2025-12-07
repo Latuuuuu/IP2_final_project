@@ -7,8 +7,10 @@
 #include <algorithm>
 #include <allegro5/bitmap_draw.h>
 #include <string>
+#include <utility>
 #include <iostream>
 #include <allegro5/allegro_primitives.h>
+#include "../physics.hpp"
 
 Block::Block(const Point &p, double v, BlockState state) {
 	ImageCenter *IC = ImageCenter::get_instance();
@@ -69,3 +71,27 @@ void Block::update_hero_hit(BulletState hero_state) {
 		hero->set_adjust_speed(0.0,ad_speed);
 	}
 }
+
+void Block::update_bullet_hit(BulletState hero_state) {
+	DataCenter *DC = DataCenter::get_instance();
+	std::vector<Bullet*> &bullets = DC->bullets;
+	for (size_t i = 0; i < bullets.size(); ++i) {
+		if (bullets[i]->shape->overlap(*this->shape)) {
+			if ((this->state == BlockState::ICE && bullets[i]->get_state() == BulletState::LIQUID) || (this->state == BlockState::WATER && bullets[i]->get_state() == BulletState::GAS) || (this->state == BlockState::VAPOR && bullets[i]->get_state() == BulletState::SOLID)) {
+				bullets[i]->alive = false;
+			} else if ((this->state == BlockState::ICE && bullets[i]->get_state() == BulletState::GAS) || (this->state == BlockState::WATER && bullets[i]->get_state() == BulletState::SOLID) || (this->state == BlockState::VAPOR && bullets[i]->get_state() == BulletState::LIQUID)) {
+				this->alive = false;
+			} else {
+				// double dis_y = bullets[i]->shape->center_y() - this->shape->center_y() * (vy ? 1 : -1);
+				// double ad_speed = vy * (1+1/dis_y);//pow(2,(1+1/dis_y));
+				std::pair<double,double> v_bullet = bullets[i]->get_speed();
+				double vx_bullet = v_bullet.first, vy_bullet = v_bullet.second;
+				std::pair<std::pair<double,double>,std::pair<double,double>> collision_result = elastic_collision_acceleration(150,std::make_pair(this->vx,this->vy),std::make_pair(this->shape->center_x(),this->shape->center_y()),1,std::make_pair(vx_bullet,vy_bullet),std::make_pair(bullets[i]->shape->center_x(),bullets[i]->shape->center_y()));
+				double ad_speed_x = collision_result.second.first;
+				double ad_speed_y = collision_result.second.second;
+				bullets[i]->set_adjust_speed(ad_speed_x,ad_speed_y);
+			}
+		}
+	}
+}
+

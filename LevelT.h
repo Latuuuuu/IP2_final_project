@@ -32,8 +32,8 @@ namespace LevelSetting {
 		0, 3200, 6400, 9600, 12800
 	};
 	const std::array<std::string, 4> lvl_background_path = {
-		"./assets/image/lvl_background.png",
-		"./assets/image/lvl_background.png",
+		"./assets/image/lvl_background.png", // "./assets/image/background/lv1.png"
+		"./assets/image/lvl_background.png", 
 		"./assets/image/lvl_background.png",
 		"./assets/image/lvl_background.png"
 	};

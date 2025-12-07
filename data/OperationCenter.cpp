@@ -25,8 +25,9 @@ void OperationCenter::update() {
 	_update_monster_hero();
 
 	_update_block();
-
 	_update_hero_block();
+	_update_bullet_block();
+
 	_update_bullet_bullet();
 	_update_tool_bullet();
 	_update_tool_others();
@@ -53,7 +54,7 @@ void OperationCenter::_update_bullet() {
 		bullet->update();
 	// Detect if a bullet flies too far (exceeds its fly distance limit), which means the bullet lifecycle has ended.
 	for(size_t i = 0; i < bullets.size(); ++i) {
-		if(bullets[i]->get_fly_dist() <= 0) {
+		if(bullets[i]->get_fly_dist() <= 0 || !bullets[i]->alive) {
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
 			--i;
@@ -123,15 +124,37 @@ void OperationCenter::_update_monster_bullet() {
 void OperationCenter::_update_hero_bullet() {
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<Bullet*> &bullets = DC->bullets;
+	// std::vector<Bullet*> &matter_bullets = DC->matterBullets;
+	// for (size_t i = 0; i < matter_bullets.size(); ++i) {
+	// 	if (DC->hero->shape->overlap(*(matter_bullets[i]->shape))) {
+	// 		matter_bullets[i]->update_matter(DC->hero->bullet_state);
+	// 	}
+	// }
 	if (DC->hero == nullptr) return;
 	for (size_t j = 0; j < bullets.size(); ++j) {
 		// Check if the bullet overlaps with the monster.
 		if (DC->hero->shape->overlap(*(bullets[j]->shape))) {
 			// Reduce the HP of the monster. Delete the bullet.
 			DC->hero->HP -= bullets[j]->get_dmg();
-			delete bullets[j];
+			delete bullets[j]; // 這邊的delete感覺要改，看起來只有刪bullets，沒有刪其他的bullet vector
 			bullets.erase(bullets.begin() + j);
 			--j;
+		}
+	}
+}
+
+void OperationCenter::_update_bullet_block() {
+	DataCenter *DC = DataCenter::get_instance();
+	std::vector<Block*> &blocks = DC->blocks;
+	std::vector<Bullet*> &bullets = DC->bullets;
+	for (size_t i = 0; i < bullets.size(); ++i) {
+		for (size_t j = 0; j < blocks.size(); ++j) {
+			// Check if the bullet overlaps with the monster.
+			if (bullets[i]->shape->overlap(*(blocks[j]->shape))) {
+				// Reduce the HP of the monster. Delete the bullet.
+				blocks[j]->update_bullet_hit(bullets[i]->get_state());
+				break;
+			}
 		}
 	}
 }

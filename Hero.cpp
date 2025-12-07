@@ -86,8 +86,8 @@ void Hero::apply_skin(int idx) {
 void Hero::change_skill_state(SkillState new_state){
     if(skill_state != new_state){
         if(new_state == SkillState::NORMAL){
-        apply_skin(0);
-        bullet_state = BulletState::BALL;
+            apply_skin(0);
+            bullet_state = BulletState::BALL;
         }else if(new_state == SkillState::SLG){
             apply_skin(2);
             bullet_state = BulletState::LIQUID;
@@ -100,7 +100,6 @@ void Hero::change_skill_state(SkillState new_state){
         }
         skill_state = new_state;
     }
-    
 }
 
 void Hero::update() {
@@ -213,7 +212,7 @@ void Hero::update() {
         const Point &p = Point(t.x / d * std::max(size.x, size.y) + shape->center_x(),
 							   t.y / d * std::max(size.x, size.y) + shape->center_y());
         std::string bullet_path = bullet_gifPath[bullet_state];
-		Bullet *atk = new Bullet(p, t, bullet_path, 480, 1, 500, bullet_state);
+		Bullet *atk = new Bullet(p, t, bullet_path, 480, 1, 750, bullet_state);
         DC->bullets.emplace_back(atk);
     }
     if (this->is_collid) {

@@ -7,6 +7,7 @@
 #include "../shapes/Circle.h"
 #include <allegro5/bitmap.h>
 #include <string>
+#include <utility>
 
 /**
  * @brief The bullet shot from Tower.
@@ -45,6 +46,9 @@ public:
 	bool update_electrode(BulletState collid_electrode); // 正負極碰撞的時候要爆炸
 	bool update_wave(int x, int y, double z, ToolType type); // 子彈碰到道具要轉彎
 	Circle force_shape; // 放 public 有點不安全，要考慮改成 private
+	bool alive = true;
+	std::pair<double,double> get_speed() { return std::make_pair(vx, vy); }
+	void set_adjust_speed(double dx, double dy) { vx += dx; vy += dy; }
 private:
 	/**
 	 * @brief Velocity in x direction.

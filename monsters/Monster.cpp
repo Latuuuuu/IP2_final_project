@@ -10,7 +10,9 @@
 #include "../shapes/Point.h"
 #include "../shapes/Rectangle.h"
 #include "../Utils.h"
+#include "../towers/Bullet.h"
 #include <allegro5/allegro_primitives.h>
+#include <iostream>
 
 using namespace std;
 

@@ -4,6 +4,7 @@
 #include "MonsterT.h"
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
+#include <random>
 
 class Monster1 : public MonsterT
 {
@@ -37,6 +38,10 @@ private:
 	void attack() override;
 	int graph_h;
 	int graph_w;
+	std::mt19937 generator;
+	std::uniform_int_distribution<int> distribution{1, 3};
+	int state_timer = 0;
+	int rand_state = 0;
 };
 
 #endif
