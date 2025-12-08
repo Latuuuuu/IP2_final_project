@@ -10,6 +10,7 @@
 #include <array>
 #include <string>
 #include <random>
+#include <deque>
 
 // fixed settings
 namespace LevelSetting {
@@ -23,7 +24,7 @@ namespace LevelSetting {
 		640, 3840, 7040, 10240
 	};
 	constexpr int puzzle_bound_x[4] = {
-		1280, 4480, 7680, 10800
+		1320, 4480, 7680, 10800 //1280
 	};
 	constexpr int monster_spawn_x[4] = {
 		1920, 5120, 8320, 11520
@@ -32,7 +33,7 @@ namespace LevelSetting {
 		0, 3200, 6400, 9600, 12800
 	};
 	const std::array<std::string, 4> lvl_background_path = {
-		"./assets/image/lvl_background.png", // "./assets/image/background/lv1.png"
+		"./assets/image/background/lv1.png", // "./assets/image/background/lv1.png"
 		"./assets/image/lvl_background.png", 
 		"./assets/image/lvl_background.png",
 		"./assets/image/lvl_background.png"
@@ -86,7 +87,8 @@ private:
 	int block_timer = 0;
 	std::mt19937 generator;
 	std::uniform_int_distribution<int> distribution{1, 30};
-	int block_x[13] = {156, 244, 332, 420, 508, 596, 684, 772, 860, 948, 1036, 1124, 1212} ;//68
+	int block_x[9] = {176, 352, 528, 616, 792, 880, 1056, 1144, 1232} ;//68
+	std::deque<int> recent_x_history;
 };
 
 #endif
