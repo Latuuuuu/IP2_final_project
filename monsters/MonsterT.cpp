@@ -89,6 +89,7 @@ MonsterT::MonsterT(MonsterType type, Point borned_place) {
 	this->need_effect = true;
 	bitmap_img_id = 0;
 	bitmap_switch_counter = 0;
+	bullet_state = BulletState::SOLID;
 }
 void MonsterT::attack() {}
 Point MonsterT::hero_tracker() {
@@ -224,10 +225,11 @@ void MonsterT::draw() {
 	ImageCenter *IC = ImageCenter::get_instance();
 	char buffer[50];
 	sprintf(
-		buffer, "%s/%s_%d.png",
+		buffer, "%s/%s_%d_%s.png",
 		MonsterSetting::monster_imgs_root_path[static_cast<int>(type)],
 		MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
-		bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
+		bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id],
+		MonsterSetting::bullet_prefix[static_cast<int>(bullet_state)]);
 	ALLEGRO_BITMAP *bitmap = IC->get(buffer);
 	Point offset = DC->camera->transform_object(*shape);
 	al_draw_bitmap(

@@ -4,6 +4,8 @@
 #include "../Object.h"
 #include "../shapes/Rectangle.h"
 #include "../shapes/Point.h"
+
+#include "../towers/Bullet.h"
 #include <vector>
 #include <queue>
 
@@ -65,6 +67,7 @@ protected:
 	int v;
 	int money;
 	std::vector<std::vector<int>> bitmap_img_ids;
+	BulletState bullet_state;
 	int bitmap_switch_counter;
 	int bitmap_switch_freq;
 	int bitmap_img_id;

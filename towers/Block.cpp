@@ -61,7 +61,7 @@ void Block::update_hero_hit(BulletState hero_state) {
 	DataCenter *DC = DataCenter::get_instance();
 	Hero *hero = DC->hero;
 	if ((this->state == BlockState::ICE && hero_state == BulletState::LIQUID) || (this->state == BlockState::WATER && hero_state == BulletState::GAS) || (this->state == BlockState::VAPOR && hero_state == BulletState::SOLID)) {
-		hero->HP = 0;
+		// hero->HP = 0;
 	} else if ((this->state == BlockState::ICE && hero_state == BulletState::GAS) || (this->state == BlockState::WATER && hero_state == BulletState::SOLID) || (this->state == BlockState::VAPOR && hero_state == BulletState::LIQUID)) {
 		this->alive = false;
 	} else {

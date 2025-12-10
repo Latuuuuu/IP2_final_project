@@ -1,6 +1,5 @@
 #include "Monster1.h"
 #include "../Hero.h"
-#include "../towers/Bullet.h"
 #include <iostream>
 using namespace std;
 
@@ -16,8 +15,8 @@ void Monster1::attack() {
 	};
 	if(!state_timer){
 		rand_state = distribution(generator);
-		state_timer = 60;
-		
+		state_timer = 120;
+		bullet_state = static_cast<BulletState>(rand_state);
 	}
 	else{
 		state_timer--;
@@ -29,12 +28,12 @@ void Monster1::attack() {
 			const Point &p = Point(t.x / d * max(graph_h, graph_w) + shape->center_x(), 
 								t.y / d * max(graph_h, graph_w) + shape->center_y());
 			
-			atk = new Bullet(p, t, atk_paths[rand_state-1], 480, 10, 500, static_cast<BulletState>(rand_state));
+			atk = new Bullet(p, t, atk_paths[rand_state-1], 480, 10, 500, bullet_state);
 		} else {
 			const Point &t = dir_to_vector(dir);
 			const Point &p = Point(t.x * max(graph_h, graph_w) + shape->center_x(), 
 								t.y * max(graph_h, graph_w) + shape->center_y());
-			atk = new Bullet(p, t, atk_paths[rand_state-1], 480, 10, 500, static_cast<BulletState>(rand_state));
+			atk = new Bullet(p, t, atk_paths[rand_state-1], 480, 10, 500, bullet_state);
 			// atk = new Bullet(p, t, "assets/image/tower/Arcane_Beam.png", 480, 10, 500, static_cast<BulletState>(rand_state));
 		}
 		DC->bullets.emplace_back(atk);

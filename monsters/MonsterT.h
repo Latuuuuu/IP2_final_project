@@ -4,6 +4,7 @@
 #include "../Object.h"
 #include "../shapes/Rectangle.h"
 #include "../shapes/Point.h"
+#include "../towers/Bullet.h"
 #include <vector>
 #include <queue>
 #include <ctime>
@@ -28,6 +29,9 @@ namespace MonsterSetting {
 	static constexpr char dir_path_prefix[][10] = {
 		"UP", "DOWN", "LEFT", "RIGHT"
 	};
+	static constexpr char bullet_prefix[][10] = {
+		"", "ice", "water", "vapor"
+	};
 }
 
 class OperationCenter;
@@ -48,6 +52,7 @@ protected:
 	int v;
 	int money;
 	std::vector<std::vector<int>> bitmap_img_ids;
+	BulletState bullet_state;
 	int bitmap_switch_counter;
 	int bitmap_switch_freq;
 	int bitmap_img_id;

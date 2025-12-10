@@ -20,12 +20,12 @@ constexpr int tower_img_top_padding = 30;
 
 void
 UI_game::init() {
-	DataCenter *DC = DataCenter::get_instance();
+	// DataCenter *DC = DataCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	love = IC->get(love_img_path);
-	int tl_x = DC->game_field_length + tower_img_left_padding;
-	int tl_y = tower_img_top_padding;
-	int max_height = 0;
+	// int tl_x = DC->game_field_length + tower_img_left_padding;
+	// int tl_y = tower_img_top_padding;
+	// int max_height = 0;
 	// arrange tower shop
 	for(size_t i = 0; i < (size_t)(TowerType::TOWERTYPE_MAX); ++i) {
 		// ALLEGRO_BITMAP *bitmap = IC->get(TowerSetting::tower_menu_img_path[i]);

@@ -22,10 +22,11 @@ public:
 		bitmap_switch_freq = 20;
 		char buffer[50];
 		sprintf(
-			buffer, "%s/%s_%d.png",
+			buffer, "%s/%s_%d_%s.png",
 			MonsterSetting::monster_imgs_root_path[static_cast<int>(type)],
 			MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
-			bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
+			bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id],
+			MonsterSetting::bullet_prefix[static_cast<int>(bullet_state)]);
 		ALLEGRO_BITMAP *bitmap = IC->get(buffer);
 		graph_h = al_get_bitmap_width(bitmap) * 0.8;
 		graph_w = al_get_bitmap_height(bitmap) * 0.8;
@@ -36,6 +37,7 @@ public:
 	}
 private:
 	void attack() override;
+	BulletState bullet_state = BulletState::SOLID;
 	int graph_h;
 	int graph_w;
 	std::mt19937 generator;
