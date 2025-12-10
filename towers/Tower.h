@@ -14,20 +14,20 @@ enum class TowerType {
 	ARCANE, ARCHER, CANON, POISON, STORM, TOWERTYPE_MAX
 };
 namespace TowerSetting {
-	const std::array<std::string, static_cast<int>(TowerType::TOWERTYPE_MAX)> tower_full_img_path = {
-		"./assets/image/tower/Arcane.png",
-		"./assets/image/tower/Archer.png",
-		"./assets/image/tower/Canon.png",
-		"./assets/image/tower/Poison.png",
-		"./assets/image/tower/Storm.png"
-	};
-	const std::array<std::string, static_cast<int>(TowerType::TOWERTYPE_MAX)> tower_menu_img_path = {
-		"./assets/image/tower/Arcane_Menu.png",
-		"./assets/image/tower/Archer_Menu.png",
-		"./assets/image/tower/Canon_Menu.png",
-		"./assets/image/tower/Poison_Menu.png",
-		"./assets/image/tower/Storm_Menu.png"
-	};
+	// const std::array<std::string, static_cast<int>(TowerType::TOWERTYPE_MAX)> tower_full_img_path = {
+		// "./assets/image/tower/Arcane.png",
+		// "./assets/image/tower/Archer.png",
+		// "./assets/image/tower/Canon.png",
+		// "./assets/image/tower/Poison.png",
+		// "./assets/image/tower/Storm.png"
+	// };
+	// const std::array<std::string, static_cast<int>(TowerType::TOWERTYPE_MAX)> tower_menu_img_path = {
+		// "./assets/image/tower/Arcane_Menu.png",
+		// "./assets/image/tower/Archer_Menu.png",
+		// "./assets/image/tower/Canon_Menu.png",
+		// "./assets/image/tower/Poison_Menu.png",
+		// "./assets/image/tower/Storm_Menu.png"
+	// };
 	const std::array<std::string, static_cast<int>(TowerType::TOWERTYPE_MAX)> tower_bullet_img_path = {
 		"./assets/image/tower/Arcane_Beam.png",
 		"./assets/image/tower/Archer_Beam.png",

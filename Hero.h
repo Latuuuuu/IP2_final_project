@@ -52,7 +52,7 @@ private:
     Point size;
     Point tool_place;
     double tool_angle;
-    double speed = 200.0;
+    double speed = 250.0;
     double speed_x = 0.0;
     double speed_y = 0.0;
     double adjust_speed_x = 0.0;

@@ -28,17 +28,17 @@ UI_game::init() {
 	int max_height = 0;
 	// arrange tower shop
 	for(size_t i = 0; i < (size_t)(TowerType::TOWERTYPE_MAX); ++i) {
-		ALLEGRO_BITMAP *bitmap = IC->get(TowerSetting::tower_menu_img_path[i]);
-		int w = al_get_bitmap_width(bitmap);
-		int h = al_get_bitmap_height(bitmap);
-		if(tl_x + w > DC->window_width) {
-			tl_x = DC->game_field_length + tower_img_left_padding;
-			tl_y += max_height + tower_img_top_padding;
-			max_height = 0;
-		}
-		tower_items.emplace_back(bitmap, Point{tl_x, tl_y}, TowerSetting::tower_price[i]);
-		tl_x += w + tower_img_left_padding;
-		max_height = std::max(max_height, h);
+		// ALLEGRO_BITMAP *bitmap = IC->get(TowerSetting::tower_menu_img_path[i]);
+		// int w = al_get_bitmap_width(bitmap);
+		// int h = al_get_bitmap_height(bitmap);
+		// if(tl_x + w > DC->window_width) {
+		// 	tl_x = DC->game_field_length + tower_img_left_padding;
+		// 	tl_y += max_height + tower_img_top_padding;
+		// 	max_height = 0;
+		// }
+		// tower_items.emplace_back(bitmap, Point{tl_x, tl_y}, TowerSetting::tower_price[i]);
+		// tl_x += w + tower_img_left_padding;
+		// max_height = std::max(max_height, h);
 	}
 	debug_log("<UI_game> state: change to HALT\n");
 	state = STATE::HALT;
@@ -136,11 +136,11 @@ UI_game::draw() {
 		al_draw_bitmap(love, game_field_length - (love_width + love_img_padding) * i, love_img_padding, 0);
 	}
 	// draw coin
-	const int &player_coin = DC->player->coin;
-	al_draw_textf(
-		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
-		game_field_length+love_img_padding, love_img_padding,
-		ALLEGRO_ALIGN_LEFT, "coin: %5d", player_coin);
+	// const int &player_coin = DC->player->coin;
+	// al_draw_textf(
+	// 	FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
+	// 	game_field_length+love_img_padding, love_img_padding,
+	// 	ALLEGRO_ALIGN_LEFT, "coin: %5d", player_coin);
 	// draw tower shop items
 	for(auto &[bitmap, p, price] : tower_items) {
 		int w = al_get_bitmap_width(bitmap);
