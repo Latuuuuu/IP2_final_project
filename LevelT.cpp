@@ -72,7 +72,7 @@ void LevelT::update1() {
 			int rand_y = rand_x % 2 ? 0 : 800;
 			Block *block = new Block(Point(block_x[rand_x], rand_y), (rand_y ? -1 : 1) * (80), static_cast<BlockState>(rand_state));//+50*rand_x
 			DC->blocks.push_back(block);
-			std::cout << "create block" << std::endl;
+			// std::cout << "create block" << std::endl;
 			block_timer = 4;
 		}else{
 			block_timer--;

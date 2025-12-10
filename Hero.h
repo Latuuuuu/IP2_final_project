@@ -33,6 +33,7 @@ public:
     const int &get_dmg() const { return dmg; }
     const Point get_size() { return size; }
     const int get_max_tool_num() { return max_tool_num; }
+    const BulletState get_bullet_state() { return bullet_state; }
     friend class OperationCenter;
     int HP;
     void change_skill_state(SkillState new_state);

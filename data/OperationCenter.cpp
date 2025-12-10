@@ -89,55 +89,91 @@ void OperationCenter::_update_block() {
 
 void OperationCenter::_update_monster_bullet() {
 	DataCenter *DC = DataCenter::get_instance();
-	std::vector<Monster*> &monsters = DC->monsters;
-	// MonsterT *monster = DC->monster;
-	std::vector<Bullet*> &bullets = DC->bullets;
-	for(size_t i = 0; i < monsters.size(); ++i) {
-		for(size_t j = 0; j < bullets.size(); ++j) {
-			// Check if the bullet overlaps with the monster.
-			if(monsters[i]->shape->overlap(*(bullets[j]->shape))) {
-				// Reduce the HP of the monster. Delete the bullet.
-				monsters[i]->HP -= bullets[j]->get_dmg();
-				delete bullets[j];
-				bullets.erase(bullets.begin() + j);
-				--j;
-			}
-		}
-	}
+	std::vector<Bullet*> &matter_bullets = DC->matterBullets;
+	std::vector<Bullet*> &wave_bullets = DC->waveBullets;
+	std::vector<Bullet*> &electrode_bullets = DC->electrodeBullets;
 	if (DC->monster == nullptr) return;
-	for (size_t j = 0; j < bullets.size(); ++j) {
+	for (size_t j = 0; j < matter_bullets.size(); ++j) {
 		// Check if the bullet overlaps with the monster.
-		if (DC->monster->shape->overlap(*(bullets[j]->shape))) {
+		if (DC->monster->shape->overlap(*(matter_bullets[j]->shape))) {
 			// Reduce the HP of the monster. Delete the bullet.
-			DC->monster->HP -= bullets[j]->get_dmg();
-			delete bullets[j];
-			bullets.erase(bullets.begin() + j);
+			// matter_bullets[j]->update_matter(DC->monster->get_state());
+			DC->monster->HP -= matter_bullets[j]->get_dmg();
+			delete matter_bullets[j];
+			matter_bullets.erase(matter_bullets.begin() + j);
 			--j;
 		}
 		if (DC->monster->HP <= 0) {
 			DC->monster = nullptr;
-			break;
+			return;
 		}
+	}
+	for (size_t j = 0; j < wave_bullets.size(); ++j) {
+		// Check if the bullet overlaps with the monster.
+		if (DC->monster->shape->overlap(*(wave_bullets[j]->shape)) && wave_bullets[j]->get_state() == BulletState::LASER) {
+			// Reduce the HP of the monster. Delete the bullet.
+			DC->monster->HP -= wave_bullets[j]->get_dmg();
+			delete wave_bullets[j];
+			wave_bullets.erase(wave_bullets.begin() + j);
+			--j;
+		}
+		if (DC->monster->HP <= 0) {
+			DC->monster = nullptr;
+			return;
+		}
+	}
+	for (size_t j = 0; j < electrode_bullets.size(); ++j) {
+		// Check if the bullet overlaps with the monster.
+		// if (DC->monster->shape->overlap(*(electrode_bullets[j]->shape))&&
+		// 	electrode_bullets[j]->update_electrode(DC->monster->get_bullet_state())) {
+		// 	// Reduce the HP of the monster. Delete the bullet.
+		// 	DC->monster->HP -= electrode_bullets[j]->get_dmg();
+		// 	delete electrode_bullets[j];
+		// 	electrode_bullets.erase(electrode_bullets.begin() + j);
+		// 	--j;
+		// }
+		// if (DC->monster->HP <= 0) {
+		// 	DC->monster = nullptr;
+		// 	break;
+		// }
 	}
 }
 
 void OperationCenter::_update_hero_bullet() {
 	DataCenter *DC = DataCenter::get_instance();
-	std::vector<Bullet*> &bullets = DC->bullets;
-	// std::vector<Bullet*> &matter_bullets = DC->matterBullets;
-	// for (size_t i = 0; i < matter_bullets.size(); ++i) {
-	// 	if (DC->hero->shape->overlap(*(matter_bullets[i]->shape))) {
-	// 		matter_bullets[i]->update_matter(DC->hero->bullet_state);
-	// 	}
-	// }
+	std::vector<Bullet*> &matter_bullets = DC->matterBullets;
+	std::vector<Bullet*> &wave_bullets = DC->waveBullets;
+	std::vector<Bullet*> &electrode_bullets = DC->electrodeBullets;
 	if (DC->hero == nullptr) return;
-	for (size_t j = 0; j < bullets.size(); ++j) {
-		// Check if the bullet overlaps with the monster.
-		if (DC->hero->shape->overlap(*(bullets[j]->shape))) {
-			// Reduce the HP of the monster. Delete the bullet.
-			DC->hero->HP -= bullets[j]->get_dmg();
-			delete bullets[j]; // 這邊的delete感覺要改，看起來只有刪bullets，沒有刪其他的bullet vector
-			bullets.erase(bullets.begin() + j);
+	for (size_t j = 0; j < matter_bullets.size(); ++j) {
+		// Check if the bullet overlaps with the hero.
+		if (DC->hero->shape->overlap(*(matter_bullets[j]->shape))) {
+			// Reduce the HP of the hero. Delete the bullet.
+			matter_bullets[j]->update_matter(DC->hero->get_bullet_state());
+			DC->hero->HP -= matter_bullets[j]->get_dmg();
+			delete matter_bullets[j];
+			matter_bullets.erase(matter_bullets.begin() + j);
+			--j;
+		}
+	}
+	for (size_t j = 0; j < wave_bullets.size(); ++j) {
+		// Check if the bullet overlaps with the hero.
+		if (DC->hero->shape->overlap(*(wave_bullets[j]->shape)) && wave_bullets[j]->get_state() == BulletState::LASER) {
+			// Reduce the HP of the hero. Delete the bullet.
+			DC->hero->HP -= wave_bullets[j]->get_dmg();
+			delete wave_bullets[j];
+			wave_bullets.erase(wave_bullets.begin() + j);
+			--j;
+		}
+	}
+	for (size_t j = 0; j < electrode_bullets.size(); ++j) {
+		// Check if the bullet overlaps with the hero.
+		if (DC->hero->shape->overlap(*(electrode_bullets[j]->shape)) &&
+			electrode_bullets[j]->update_electrode(DC->hero->get_bullet_state())) {
+			// Reduce the HP of the hero. Delete the bullet.
+			DC->hero->HP -= electrode_bullets[j]->get_dmg();
+			delete electrode_bullets[j];
+			electrode_bullets.erase(electrode_bullets.begin() + j);
 			--j;
 		}
 	}
@@ -199,7 +235,7 @@ void OperationCenter::_update_monster_hero() {
 void OperationCenter::_update_bullet_bullet() {
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<Bullet*> &matter_bullets = DC->matterBullets;
-	std::vector<Bullet*> &eletrode_bullets = DC->electrodeBullets;
+	std::vector<Bullet*> &electrode_bullets = DC->electrodeBullets;
 	bool need_delete = false;
 	for (size_t i = 0; i < matter_bullets.size(); ++i) {
 		for (size_t j = i + 1; j < matter_bullets.size(); ++j) {
@@ -209,17 +245,17 @@ void OperationCenter::_update_bullet_bullet() {
 			}
 		}
 	}
-	for (size_t i = 0; i < eletrode_bullets.size(); ++i) {
-		for (size_t j = i + 1; j < eletrode_bullets.size(); ++j) {
-			if (eletrode_bullets[i]->shape->overlap(*eletrode_bullets[j]->shape)) { // 碰到，需不需要爆炸
-				need_delete = eletrode_bullets[i]->update_electrode(eletrode_bullets[j]->get_state());
-				eletrode_bullets[j]->update_electrode(eletrode_bullets[i]->get_state());
+	for (size_t i = 0; i < electrode_bullets.size(); ++i) {
+		for (size_t j = i + 1; j < electrode_bullets.size(); ++j) {
+			if (electrode_bullets[i]->shape->overlap(*electrode_bullets[j]->shape)) { // 碰到，需不需要爆炸
+				need_delete = electrode_bullets[i]->update_electrode(electrode_bullets[j]->get_state());
+				electrode_bullets[j]->update_electrode(electrode_bullets[i]->get_state());
 			}
 			if (need_delete) { // 爆炸後刪除兩顆子彈
-				delete eletrode_bullets[i];
-				delete eletrode_bullets[j];
-				eletrode_bullets.erase(eletrode_bullets.begin() + i);
-				eletrode_bullets.erase(eletrode_bullets.begin() + j - 1);
+				delete electrode_bullets[i];
+				delete electrode_bullets[j];
+				electrode_bullets.erase(electrode_bullets.begin() + i);
+				electrode_bullets.erase(electrode_bullets.begin() + j - 1);
 				--i;
 				break;
 			}

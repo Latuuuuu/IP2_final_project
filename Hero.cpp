@@ -214,6 +214,12 @@ void Hero::update() {
         std::string bullet_path = bullet_gifPath[bullet_state];
 		Bullet *atk = new Bullet(p, t, bullet_path, 480, 1, 750, bullet_state);
         DC->bullets.emplace_back(atk);
+        if (skill_state == SkillState::SLG)
+            DC->matterBullets.emplace_back(atk);
+        else if (skill_state == SkillState::ELECTRIC)
+            DC->electrodeBullets.emplace_back(atk);
+        else if (skill_state == SkillState::WAVE)
+            DC->waveBullets.emplace_back(atk);
     }
     // if (this->is_collid) {
     //     this->is_collid = false;
