@@ -67,6 +67,7 @@ void Bullet::update_matter(BulletState collid_matter) {  // 第一關子彈的�
 			(this->state == BulletState::SOLID && collid_matter == BulletState::LIQUID) ||
 			(this->state == BulletState::LIQUID && collid_matter == BulletState::GAS)) {
 		this->dmg *= 2;
+		std::cout << "double dmg" << std::endl;
 	}
 	// 判斷兩個都是同樣的物質型態，讓速度變 0
 }

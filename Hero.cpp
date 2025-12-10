@@ -103,7 +103,7 @@ void Hero::change_skill_state(SkillState new_state){
 }
 
 void Hero::update() {
-    std::cout << "Hero HP: " << HP << "\n";
+    // std::cout << "Hero HP: " << HP << "\n";
     DataCenter *DC = DataCenter::get_instance();
     if (all_skill) {//技能組切換
         if (DC->key_state[ALLEGRO_KEY_1] && !DC->prev_key_state[ALLEGRO_KEY_1]) { 
