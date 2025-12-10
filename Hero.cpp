@@ -62,8 +62,8 @@ void Hero::init(int lvl) {
     } else {
         this->level = lvl;
         shape.reset(new Rectangle{
-            60 - size.x / 2 , DC->window_height / 2 - size.y / 2,//LevelSetting::hero_spawn_x[lvl-1]
-            60 + size.x / 2, DC->window_height / 2 + size.y / 2
+            LevelSetting::hero_spawn_x[this->level-1] - size.x / 2 , DC->window_height / 2 - size.y / 2,//LevelSetting::hero_spawn_x[lvl-1]
+            LevelSetting::hero_spawn_x[this->level-1] + size.x / 2, DC->window_height / 2 + size.y / 2
         });
     }
     if (this->level == 2 || this->level == 4)
@@ -215,10 +215,10 @@ void Hero::update() {
 		Bullet *atk = new Bullet(p, t, bullet_path, 480, 1, 750, bullet_state);
         DC->bullets.emplace_back(atk);
     }
-    if (this->is_collid) {
-        this->is_collid = false;
-        return;
-    }
+    // if (this->is_collid) {
+    //     this->is_collid = false;
+    //     return;
+    // }
     if(DC->key_state[ALLEGRO_KEY_W]){ //上下左右
         speed_y = -speed;
         state = HeroState::BACK;
@@ -232,8 +232,12 @@ void Hero::update() {
         speed_x = speed;
         state = HeroState::RIGHT;
     }
-    shape->update_center_x(shape->center_x() + (speed_x + adjust_speed_x) / DC->FPS);
-    shape->update_center_y(shape->center_y() + (speed_y + adjust_speed_y) / DC->FPS);
+    double x = shape->center_x() + (speed_x + adjust_speed_x) / DC->FPS;
+    double y = shape->center_y() + (speed_y + adjust_speed_y) / DC->FPS;
+    if(y > DC->window_height - size.y / 2.0) y = DC->window_height - size.y / 2.0;
+    else if( y < DC->window_height * 0.2 + size.y / 2.0) y = DC->window_height * 0.2 + size.y / 2.0;
+    shape->update_center_x(x);
+    shape->update_center_y(y);
     speed_x = 0.0;
     speed_y = 0.0;
     adjust_speed_x = 0.0; //歸零速度調整

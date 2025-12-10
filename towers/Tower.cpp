@@ -21,8 +21,8 @@ namespace TowerSetting {
 
 ALLEGRO_BITMAP*
 Tower::get_bitmap(TowerType type) {
-	ImageCenter *IC = ImageCenter::get_instance();
-	return IC->get(TowerSetting::tower_full_img_path[static_cast<int>(type)]);
+	// ImageCenter *IC = ImageCenter::get_instance();
+	// return IC->get(TowerSetting::tower_full_img_path[static_cast<int>(type)]);
 }
 
 Tower*
@@ -56,7 +56,7 @@ Tower::Tower(const Point &p, double attack_range, int attack_freq, TowerType typ
 	counter = 0;
 	this->attack_freq = attack_freq;
 	this->type = type;
-	bitmap = IC->get(TowerSetting::tower_full_img_path[static_cast<int>(type)]);
+	// bitmap = IC->get(TowerSetting::tower_full_img_path[static_cast<int>(type)]);
 }
 
 /**

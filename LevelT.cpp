@@ -54,23 +54,23 @@ void LevelT::update1() {
 		if(!block_timer){
 			bool repeat = true;
 			int rand_state = distribution(generator) % 3;
-			int rand_x = distribution(generator) % 9;
+			int rand_x = distribution(generator) % 16;
 			while(repeat){
 				repeat = false;
 				for(int x : recent_x_history){
 					if(rand_x == x){
 						repeat = true;
-						rand_x = distribution(generator) % 9;
+						rand_x = distribution(generator) % 16;
 						break;
 					}
 				}
 			}
 			recent_x_history.push_back(rand_x);
-			if (recent_x_history.size() > 5) {
+			if (recent_x_history.size() > 11) {
 				recent_x_history.pop_front();
 			}
-			int rand_y = rand_x % 2 ? 0 : 1280;
-			Block *block = new Block(Point(block_x[rand_x], rand_y), (rand_y ? -1 : 1) * (160), static_cast<BlockState>(rand_state));//+50*rand_x
+			int rand_y = rand_x % 2 ? 0 : 800;
+			Block *block = new Block(Point(block_x[rand_x], rand_y), (rand_y ? -1 : 1) * (80), static_cast<BlockState>(rand_state));//+50*rand_x
 			DC->blocks.push_back(block);
 			std::cout << "create block" << std::endl;
 			block_timer = 4;
