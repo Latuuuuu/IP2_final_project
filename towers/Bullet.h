@@ -44,12 +44,15 @@ public:
 	void update_matter(BulletState collid_matter); // 剪刀石頭布
 	void update_force(Point force_source); // 處理引力與斥力
 	bool update_electrode(BulletState collid_electrode); // 正負極碰撞的時候要爆炸
-	bool update_wave(int x, int y, double z, ToolType type); // 子彈碰到道具要轉彎
+	bool update_wave(int x, int y, double z, ToolType type, std::pair<Point, Point> focal); // 子彈碰到道具要轉彎
+	//
 	Circle force_shape; // 放 public 有點不安全，要考慮改成 private
 	bool alive = true;
 	std::pair<double,double> get_speed() { return std::make_pair(vx, vy); }
 	void set_adjust_speed(double dx, double dy) { vx += dx; vy += dy; }
 private:
+	double dot(std::pair<double, double>,std::pair<double, double>);
+	double dist2(std::pair<double, double> v);
 	/**
 	 * @brief Velocity in x direction.
 	 */

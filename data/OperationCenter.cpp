@@ -2,7 +2,6 @@
 #include "DataCenter.h"
 #include "../monsters/Monster.h"
 #include "../monsters/MonsterT.h"
-#include "../towers/Tower.h"
 #include "../towers/Bullet.h"
 #include "../towers/Block.h"
 #include "../Player.h"
@@ -12,8 +11,6 @@
 void OperationCenter::update() {
 	// Update monsters.
 	_update_monster();
-	// Update towers.
-	_update_tower();
 	// Update tower bullets.
 	_update_bullet();
 	// Update tools.
@@ -21,7 +18,7 @@ void OperationCenter::update() {
 	// If any bullet overlaps with any monster, we delete the bullet, reduce the HP of the monster, and delete the monster if necessary.
 	_update_monster_bullet();
 	_update_hero_bullet();
-	// If any monster hits hero, monster dies. 
+	// If any monster hits hero, monster dies.
 	_update_monster_hero();
 
 	_update_block();
@@ -42,21 +39,45 @@ void OperationCenter::_update_monster() {
 		monster->update();
 }
 
-void OperationCenter::_update_tower() {
-	std::vector<Tower*> &towers = DataCenter::get_instance()->towers;
-	for(Tower *tower : towers)
-		tower->update();
-}
-
 void OperationCenter::_update_bullet() {
 	std::vector<Bullet*> &bullets = DataCenter::get_instance()->bullets;
+	std::vector<Bullet*> &matter_bullets = DataCenter::get_instance()->matterBullets;
+	std::vector<Bullet*> &wave_bullets = DataCenter::get_instance()->waveBullets;
+	std::vector<Bullet*> &electrode_bullets = DataCenter::get_instance()->electrodeBullets;
 	for(Bullet *bullet : bullets)
+		bullet->update();
+	for(Bullet *bullet : matter_bullets)
+		bullet->update();
+	for(Bullet *bullet : wave_bullets)
+		bullet->update();
+	for(Bullet *bullet : electrode_bullets)
 		bullet->update();
 	// Detect if a bullet flies too far (exceeds its fly distance limit), which means the bullet lifecycle has ended.
 	for(size_t i = 0; i < bullets.size(); ++i) {
 		if(bullets[i]->get_fly_dist() <= 0 || !bullets[i]->alive) {
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
+			--i;
+		}
+	}
+	for(size_t i = 0; i < matter_bullets.size(); ++i) {
+		if(matter_bullets[i]->get_fly_dist() <= 0 || !matter_bullets[i]->alive) {
+			delete matter_bullets[i];
+			matter_bullets.erase(matter_bullets.begin() + i);
+			--i;
+		}
+	}
+	for(size_t i = 0; i < wave_bullets.size(); ++i) {
+		if(wave_bullets[i]->get_fly_dist() <= 0 || !wave_bullets[i]->alive) {
+			delete wave_bullets[i];
+			wave_bullets.erase(wave_bullets.begin() + i);
+			--i;
+		}
+	}
+	for(size_t i = 0; i < electrode_bullets.size(); ++i) {
+		if(electrode_bullets[i]->get_fly_dist() <= 0 || !electrode_bullets[i]->alive) {
+			delete electrode_bullets[i];
+			electrode_bullets.erase(electrode_bullets.begin() + i);
 			--i;
 		}
 	}
@@ -89,10 +110,21 @@ void OperationCenter::_update_block() {
 
 void OperationCenter::_update_monster_bullet() {
 	DataCenter *DC = DataCenter::get_instance();
+	std::vector<Bullet*> &bullets = DC->bullets;
 	std::vector<Bullet*> &matter_bullets = DC->matterBullets;
 	std::vector<Bullet*> &wave_bullets = DC->waveBullets;
-	std::vector<Bullet*> &electrode_bullets = DC->electrodeBullets;
+	// std::vector<Bullet*> &electrode_bullets = DC->electrodeBullets;
 	if (DC->monster == nullptr) return;
+	for (size_t j = 0; j < bullets.size(); ++j) {
+		// Check if the bullet overlaps with the hero.
+		if (DC->hero->shape->overlap(*(bullets[j]->shape))) {
+			// Reduce the HP of the hero. Delete the bullet.
+			DC->hero->HP -= bullets[j]->get_dmg();
+			delete bullets[j];
+			bullets.erase(bullets.begin() + j);
+			--j;
+		}
+	}
 	for (size_t j = 0; j < matter_bullets.size(); ++j) {
 		// Check if the bullet overlaps with the monster.
 		if (DC->monster->shape->overlap(*(matter_bullets[j]->shape))) {
@@ -122,7 +154,7 @@ void OperationCenter::_update_monster_bullet() {
 			return;
 		}
 	}
-	for (size_t j = 0; j < electrode_bullets.size(); ++j) {
+	// for (size_t j = 0; j < electrode_bullets.size(); ++j) {
 		// Check if the bullet overlaps with the monster.
 		// if (DC->monster->shape->overlap(*(electrode_bullets[j]->shape))&&
 		// 	electrode_bullets[j]->update_electrode(DC->monster->get_bullet_state())) {
@@ -136,15 +168,26 @@ void OperationCenter::_update_monster_bullet() {
 		// 	DC->monster = nullptr;
 		// 	break;
 		// }
-	}
+	// }
 }
 
 void OperationCenter::_update_hero_bullet() {
 	DataCenter *DC = DataCenter::get_instance();
+	std::vector<Bullet*> &bullets = DC->bullets;
 	std::vector<Bullet*> &matter_bullets = DC->matterBullets;
 	std::vector<Bullet*> &wave_bullets = DC->waveBullets;
 	std::vector<Bullet*> &electrode_bullets = DC->electrodeBullets;
 	if (DC->hero == nullptr) return;
+	for (size_t j = 0; j < bullets.size(); ++j) {
+		// Check if the bullet overlaps with the hero.
+		if (DC->hero->shape->overlap(*(bullets[j]->shape))) {
+			// Reduce the HP of the hero. Delete the bullet.
+			DC->hero->HP -= bullets[j]->get_dmg();
+			delete bullets[j];
+			bullets.erase(bullets.begin() + j);
+			--j;
+		}
+	}
 	for (size_t j = 0; j < matter_bullets.size(); ++j) {
 		// Check if the bullet overlaps with the hero.
 		if (DC->hero->shape->overlap(*(matter_bullets[j]->shape))) {
@@ -183,12 +226,35 @@ void OperationCenter::_update_bullet_block() {
 	DataCenter *DC = DataCenter::get_instance();
 	std::vector<Block*> &blocks = DC->blocks;
 	std::vector<Bullet*> &bullets = DC->bullets;
+	std::vector<Bullet*> &matter_bullets = DC->matterBullets;
+	// std::vector<Bullet*> &wave_bullets = DC->waveBullets;
+	std::vector<Bullet*> &electrode_bullets = DC->electrodeBullets;
 	for (size_t i = 0; i < bullets.size(); ++i) {
 		for (size_t j = 0; j < blocks.size(); ++j) {
 			// Check if the bullet overlaps with the monster.
 			if (bullets[i]->shape->overlap(*(blocks[j]->shape))) {
 				// Reduce the HP of the monster. Delete the bullet.
-				blocks[j]->update_bullet_hit(bullets[i]->get_state());
+				blocks[j]->update_bullet_hit(bullets[i]->get_state(), bullets[i]);
+				break;
+			}
+		}
+	}
+	for (size_t i = 0; i < matter_bullets.size(); ++i) {
+		for (size_t j = 0; j < blocks.size(); ++j) {
+			// Check if the bullet overlaps with the monster.
+			if (matter_bullets[i]->shape->overlap(*(blocks[j]->shape))) {
+				// Reduce the HP of the monster. Delete the bullet.
+				blocks[j]->update_bullet_hit(matter_bullets[i]->get_state(), matter_bullets[i]);
+				break;
+			}
+		}
+	}
+	for (size_t i = 0; i < electrode_bullets.size(); ++i) {
+		for (size_t j = 0; j < blocks.size(); ++j) {
+			// Check if the bullet overlaps with the monster.
+			if (electrode_bullets[i]->shape->overlap(*(blocks[j]->shape))) {
+				// Reduce the HP of the monster. Delete the bullet.
+				blocks[j]->update_bullet_hit(electrode_bullets[i]->get_state(), electrode_bullets[i]);
 				break;
 			}
 		}
@@ -291,10 +357,11 @@ void OperationCenter::_update_tool_bullet() {
 	for (size_t i = 0; i < wave_bullets.size(); ++i) {
 		for (size_t j = 0; j < tools.size(); ++j) {
 			if (wave_bullets[i]->shape->overlap(*tools[j]->shape) && // 判斷 wave 有沒有碰到道具
-				wave_bullets[i]->update_wave(tools[j]->shape->center_x(), tools[j]->shape->center_y(), tools[i]->get_angle(), tools[j]->get_type())) { // 進入函式：1. 判斷是不是聲波 (要不要破壞道具)。2. 改變子彈移動方向
-					delete tools[j];
-					tools.erase(tools.begin() + j);
-					// --j;  // 反正會直接 break ，所以可以不用 --j
+				wave_bullets[i]->update_wave(tools[j]->shape->center_x(), tools[j]->shape->center_y(), tools[j]->get_angle(), tools[j]->get_type(), tools[j]->get_focus())) { // 進入函式：1. 判斷是不是聲波 (要不要破壞道具)。2. 改變子彈移動方向
+				// 	delete tools[j];
+				// 	tools.erase(tools.begin() + j);
+				// --j;  // 反正會直接 break ，所以可以不用 --j
+				// break;
 				break;
 			}
 		}
@@ -309,6 +376,7 @@ void OperationCenter::_update_tool_others() {
 	
 	for (size_t i = 0; i < tools.size(); ++i) {
 		if (i != tools.size() - 1 && tools[i]->shape->overlap(*tools.back()->shape)) {
+			std::cout << "tool tool overlap" <<std::endl;
 			delete tools.back();
 			tools.erase(tools.begin() + tools.size() - 1);
 		}
@@ -325,7 +393,6 @@ void OperationCenter::_update_tool_others() {
 
 void OperationCenter::draw() {
 	_draw_monster();
-	_draw_tower();
 	_draw_tool();
 	_draw_bullet();
 	_draw_block();
@@ -340,15 +407,18 @@ void OperationCenter::_draw_monster() {
 		monster->draw();
 }
 
-void OperationCenter::_draw_tower() {
-	std::vector<Tower*> &towers = DataCenter::get_instance()->towers;
-	for(Tower *tower : towers)
-		tower->draw();
-}
-
 void OperationCenter::_draw_bullet() {
 	std::vector<Bullet*> &bullets = DataCenter::get_instance()->bullets;
+	std::vector<Bullet*> &matter_bullets = DataCenter::get_instance()->matterBullets;
+	std::vector<Bullet*> &eletrode_bullets = DataCenter::get_instance()->electrodeBullets;
+	std::vector<Bullet*> &wave_bullets = DataCenter::get_instance()->waveBullets;
 	for(Bullet *bullet : bullets)
+		bullet->draw();
+	for(Bullet *bullet : matter_bullets)
+		bullet->draw();
+	for(Bullet *bullet : eletrode_bullets)
+		bullet->draw();
+	for(Bullet *bullet : wave_bullets)
 		bullet->draw();
 }
 

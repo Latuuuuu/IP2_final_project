@@ -26,7 +26,6 @@ private:
 	OperationCenter() {}
 private:
 	void _update_monster();
-	void _update_tower();
 	void _update_tool();
 	void _update_bullet();
 	void _update_hero_bullet();
@@ -40,7 +39,6 @@ private:
 	void _update_bullet_block();
 private:
 	void _draw_monster();
-	void _draw_tower();
 	void _draw_bullet();
 	void _draw_tool();
 	void _draw_block();

@@ -29,8 +29,9 @@ public:
 	Tool(const Point &p, const double z, ToolType type);
 	void update();
 	void draw();
-	const ToolType get_type() { return type; }
-	const double get_angle() { return angle; }
+	ToolType get_type() const { return type; }
+	double get_angle() const { return angle; }
+	std::pair<Point,Point> get_focus() const { return {focus0,focus1}; }
 private:
 	/**
 	 * @brief rotation angle of the tool
@@ -41,6 +42,8 @@ private:
 	 */
 	ALLEGRO_BITMAP *bitmap;
 	ToolType type;
+	double focal_lenght;
+	Point focus0, focus1;
 };
 
 #endif
