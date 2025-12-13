@@ -117,7 +117,7 @@ bool checkOverlap(const Circle *c, const Line *l) {
 	const Point& C = Point(c->x, c->y);
     Point P(l->x1 + t_closest * v_x, l->y1 + t_closest * v_y);
     // 6. 檢查 P 到圓心 C 的距離平方是否小於等於半徑平方 R^2
-    return Point::dist2(C, P) <= (c->r * c->r);
+    return Point::dist2(C, P) <= (c->r * c->r * 2 * 2);
 }
 
 /**

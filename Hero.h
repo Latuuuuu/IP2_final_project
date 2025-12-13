@@ -52,7 +52,8 @@ private:
     std::map<BulletState, std::string> bullet_gifPath;
     Point size;
     Point tool_place;
-    double tool_angle;
+    Point hero_dir;
+    double hero_angle;
     double speed = 250.0;
     double speed_x = 0.0;
     double speed_y = 0.0;

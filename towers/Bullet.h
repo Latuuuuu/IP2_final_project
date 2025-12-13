@@ -52,7 +52,9 @@ public:
 	void set_adjust_speed(double dx, double dy) { vx += dx; vy += dy; }
 private:
 	double dot(std::pair<double, double>,std::pair<double, double>);
+	double cross(std::pair<double, double> v1,std::pair<double, double> v2);
 	double dist2(std::pair<double, double> v);
+	void update_line();
 	/**
 	 * @brief Velocity in x direction.
 	 */
