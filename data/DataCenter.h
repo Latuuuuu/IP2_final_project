@@ -95,7 +95,6 @@ public:
 	 * @brief Raw list of Tower objects.
 	 * @see Tower
 	 */
-	std::vector<Tower*> towers;
 	std::vector<Tool*> tools;
 	/**
 	 * @brief Raw list of Bullet objects.

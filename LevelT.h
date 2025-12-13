@@ -21,16 +21,16 @@ namespace LevelSetting {
 	};
 	constexpr int monster_spawn_rate = 90;
 	constexpr int hero_spawn_x[4] = {
-		60, 3960, 7040, 10240
+		60, 4600, 7800, 1100
 	};
 	constexpr int puzzle_bound_x[4] = {
-		2816, 5240, 7680, 10800 //1280./
+		2816, 6016, 9216, 12416 //1280./
 	};
 	constexpr int monster_spawn_x[4] = {
-		3476, 5240, 8320, 11520
+		3476, 6676, 9876, 13076
 	};
 	constexpr int lvl_bound_x[5] = {
-		0, 4600, 6400, 9600, 12800
+		0, 4600, 7800, 11000, 14200
 	};
 	const std::array<std::string, 4> lvl_background_path = {
 		"./assets/image/background/lv1.png", // "./assets/image/background/lv1.png"

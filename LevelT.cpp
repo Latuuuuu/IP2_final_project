@@ -72,7 +72,7 @@ void LevelT::update1() {
 			int rand_y = rand_x % 2 ? 0 : 800;
 			Block *block = new Block(Point(block_x[rand_x], rand_y), (rand_y ? -1 : 1) * (80), static_cast<BlockState>(rand_state));//+50*rand_x
 			DC->blocks.push_back(block);
-			std::cout << "create block" << std::endl;
+			// std::cout << "create block" << std::endl;
 			block_timer = 4;
 		}else{
 			block_timer--;
@@ -97,7 +97,10 @@ void LevelT::update2() {
 	DataCenter *DC = DataCenter::get_instance();
 	if (!is_puzzle_solved) {
 		// update puzzle
+		DC->hero->change_skill_state(SkillState::NORMAL);
 		is_puzzle_solved = true;
+	} else {
+		DC->hero->change_skill_state(SkillState::WAVE);
 	}
 	if (DC->monster != nullptr || !is_monster_spawn) {
 		// update arena
@@ -116,7 +119,7 @@ void LevelT::update3() {
 	if (!is_puzzle_solved) { // 解謎遊戲還沒完成
 		// update puzzle
 		is_puzzle_solved = true; // 會決定角色是否獲得技能
-	} 
+	}
 	if (DC->monster != nullptr || !is_monster_spawn) { // 怪獸還沒死(已經生成) 或 怪獸還沒生成(還沒離開解謎區)
 		// update arena
 		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[2] && !is_monster_spawn) {
@@ -154,7 +157,7 @@ void LevelT::draw() {
 	if(level == -1) return;
 
 	for (size_t i = 0; i < 4; ++i) {
-		if (DC->hero->shape->center_x() > LevelSetting::lvl_bound_x[i] && DC->hero->shape->center_x() < LevelSetting::puzzle_bound_x[i]) {
+		if (DC->hero->shape->center_x() >= LevelSetting::lvl_bound_x[i] && DC->hero->shape->center_x() < LevelSetting::puzzle_bound_x[i]) {
 			background = IC->get(LevelSetting::lvl_background_path[i]);
 			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_x(),

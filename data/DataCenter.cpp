@@ -5,7 +5,6 @@
 #include "../Player.h"
 #include "../monsters/Monster.h"
 #include "../monsters/MonsterT.h"
-#include "../towers/Tower.h"
 #include "../towers/Tool.h"
 #include "../towers/Bullet.h"
 #include "../Hero.h"
@@ -46,9 +45,6 @@ DataCenter::~DataCenter() {
 		delete m;
 	}
 	delete monster;
-	for(Tower *&t : towers) {
-		delete t;
-	}
 	for(Tool *&t : tools) {
 		delete t;
 	}

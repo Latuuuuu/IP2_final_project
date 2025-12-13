@@ -9,7 +9,6 @@
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
 #include "Player.h"
-#include "towers/Tower.h"
 #include "Level.h"
 
 // fixed settings
@@ -27,19 +26,6 @@ UI_game::init() {
 	// int tl_y = tower_img_top_padding;
 	// int max_height = 0;
 	// arrange tower shop
-	for(size_t i = 0; i < (size_t)(TowerType::TOWERTYPE_MAX); ++i) {
-		// ALLEGRO_BITMAP *bitmap = IC->get(TowerSetting::tower_menu_img_path[i]);
-		// int w = al_get_bitmap_width(bitmap);
-		// int h = al_get_bitmap_height(bitmap);
-		// if(tl_x + w > DC->window_width) {
-		// 	tl_x = DC->game_field_length + tower_img_left_padding;
-		// 	tl_y += max_height + tower_img_top_padding;
-		// 	max_height = 0;
-		// }
-		// tower_items.emplace_back(bitmap, Point{tl_x, tl_y}, TowerSetting::tower_price[i]);
-		// tl_x += w + tower_img_left_padding;
-		// max_height = std::max(max_height, h);
-	}
 	debug_log("<UI_game> state: change to HALT\n");
 	state = STATE::HALT;
 	on_item = -1;
@@ -101,24 +87,6 @@ UI_game::update() {
 			break;
 		} case STATE::PLACE: {
 			// check placement legality
-			ALLEGRO_BITMAP *bitmap = Tower::get_bitmap(static_cast<TowerType>(on_item));
-			int w = al_get_bitmap_width(bitmap);
-			int h = al_get_bitmap_height(bitmap);
-			Rectangle place_region{mouse.x - w / 2, mouse.y - h / 2, DC->mouse.x + w / 2, DC->mouse.y + h / 2};
-			bool place = true;
-			// tower cannot intersect with other towers
-			for(Tower *tower : DC->towers) {
-				place &= (!place_region.overlap(tower->get_region()));
-			}
-			if(!place) {
-				debug_log("<UI_game> Tower place failed.\n");
-			} else {
-				DC->towers.emplace_back(Tower::create_tower(static_cast<TowerType>(on_item), mouse));
-				DC->player->coin -= std::get<2>(tower_items[on_item]);
-			}
-			debug_log("<UI_game> state: change to HALT\n");
-			state = STATE::HALT;
-			break;
 		}
 	}
 }
@@ -127,7 +95,7 @@ void
 UI_game::draw() {
 	DataCenter *DC = DataCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
-	const Point &mouse = DC->mouse;
+	// const Point &mouse = DC->mouse;
 	// draw HP
 	const int &game_field_length = DC->game_field_length;
 	const int &player_HP = DC->player->HP;
@@ -157,13 +125,8 @@ UI_game::draw() {
 	}
 
 	switch(state) {
-		static Tower *selected_tower = nullptr;
 		case STATE::HALT: {
 			// No tower should be selected for HALT state.
-			if(selected_tower != nullptr) {
-				delete selected_tower;
-				selected_tower = nullptr;
-			}
 			break;
 		} case STATE::HOVER: {
 			auto &[bitmap, p, price] = tower_items[on_item];
@@ -175,21 +138,9 @@ UI_game::draw() {
 		}
 		case STATE::SELECT: {
 			// If a tower is selected, we new a corresponding tower for previewing purpose.
-			if(selected_tower == nullptr) {
-				selected_tower = Tower::create_tower(static_cast<TowerType>(on_item), mouse);
-			} else {
-				selected_tower->shape->update_center_x(mouse.x);
-				selected_tower->shape->update_center_y(mouse.y);
-			}
 		}
 		case STATE::PLACE: {
 			// If we select a tower from menu, we need to preview where the tower will be built and its attack range.
-			ALLEGRO_BITMAP *bitmap = Tower::get_bitmap(static_cast<TowerType>(on_item));
-			al_draw_filled_circle(mouse.x, mouse.y, selected_tower->attack_range(), al_map_rgba(255, 0, 0, 32));
-			int w = al_get_bitmap_width(bitmap);
-			int h = al_get_bitmap_height(bitmap);
-			al_draw_bitmap(bitmap, mouse.x - w / 2, mouse.y - h / 2, 0);
-			break;
 		}
 	}
 }

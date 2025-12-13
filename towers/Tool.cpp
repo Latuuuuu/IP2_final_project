@@ -9,11 +9,16 @@
 Tool::Tool(const Point &p, const double z, ToolType type) {
 	std::string path = std::string(ToolSetting::root_path) + "/" + ToolSetting::dir_path_postfix[static_cast<int>(type)] + ".png";
 	bitmap = ImageCenter::get_instance()->get(path);
-	int len = al_get_bitmap_height(bitmap);
+	double len = al_get_bitmap_height(bitmap) * 1.5;
 	Line *line = new Line(p.x, p.y+len/2, p.x, p.y-len/2);
+	focal_lenght = 40.0;
+	focus0.x = cos(z)*focal_lenght+p.x;
+	focus0.y = sin(z)*focal_lenght+p.y;
+	focus1.x = cos(z)*(-focal_lenght)+p.x;
+	focus1.y = sin(z)*(-focal_lenght)+p.y;
+	std::cout << "focus: " << focus0.x << " " << focus0.y << " " << focus1.x << " " << focus1.y << std::endl;
 	line->update_center_z(z, p);
 	shape.reset(line);
-	// shape.reset(new Line(p.x, p.y+len/2, p.x, p.y-len/2));
 	this->type = type;
 	this->angle = z;
 }

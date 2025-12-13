@@ -3,6 +3,7 @@
 #include "../data/ImageCenter.h"
 #include "../Camera.h"
 #include "../shapes/Point.h"
+#include <cmath>
 #include <algorithm>
 #include <allegro5/bitmap_draw.h>
 #include <allegro5/allegro_primitives.h>
@@ -27,12 +28,16 @@ Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, dou
 	this->fly_dist = fly_dist;
 	this->dmg = dmg;
 	bitmap = IC->get(path);
-	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) *0.25;
-	shape.reset(new Circle{p.x, p.y, r});
+	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.25;
 	double d = Point::dist(vector);
 	vx = vector.x * v / d;
 	vy = vector.y * v / d;
     this->state = state;
+	// if (this->state == BulletState::LASER)
+	// 	shape.reset(new Point{p.x, p.y});
+	// else
+		shape.reset(new Circle{p.x, p.y, r});
+
 }
 
 /**
@@ -67,20 +72,61 @@ void Bullet::update_matter(BulletState collid_matter) {  // 第一關子彈的�
 			(this->state == BulletState::SOLID && collid_matter == BulletState::LIQUID) ||
 			(this->state == BulletState::LIQUID && collid_matter == BulletState::GAS)) {
 		this->dmg *= 2;
+		std::cout << "double dmg" << std::endl;
 	}
 	// 判斷兩個都是同樣的物質型態，讓速度變 0
 }
 
-bool Bullet::update_wave(int x, int y, double z, ToolType type) { // 第二關，撞到道具時的動作
-	if (this->state == BulletState::SOUND)
+double Bullet::dot(std::pair<double, double> v1,std::pair<double, double> v2) {
+	return v1.first*v2.first+v1.second*v2.second;
+}
+double Bullet::dist2(std::pair<double, double> v) {
+	return v.first*v.first+v.second*v.second;
+}
+
+bool Bullet::update_wave(int x, int y, double z, ToolType type, std::pair<Point, Point> focal) { // 第二關，撞到道具時的動作
+	if (this->state == BulletState::SOUND) {
 		return true; // need to destroy collided tool
+	}
 	if (this->state == BulletState::LASER) {
-		if (type == ToolType::CONVEX) {
-
-		} else if (type == ToolType::CONCAVE) {
-
+		std::pair<double, double> vec_f0, vec_in;
+		double cos2_in, vel;
+		vec_in.first = this->vx;
+		vec_in.second = this->vy;
+		vel = sqrt(dist2(vec_in));
+		if (dot({focal.first.x - this->shape->center_x(),focal.first.y - this->shape->center_y()}, vec_in) > 0) {
+			vec_f0.first = focal.first.x - this->shape->center_x();
+			vec_f0.second = focal.first.y - this->shape->center_y();
+			// std::cout << "1";
+		} else if (dot({focal.second.x - this->shape->center_x(), focal.second.y - this->shape->center_y()}, vec_in) > 0) {
+			vec_f0.first = focal.second.x - this->shape->center_x();
+			vec_f0.second = focal.second.y - this->shape->center_y();
+			// std::cout << "2";
+		} else {
+			std::cout << "3";
+			return false;
+		}
+		// std::cout << " vec_f: " << vec_f0.first << " " << vec_f0.second << std::endl;
+		// std::cout << " vec_in: " << vec_in.first << " " << vec_in.second << std::endl;
+		cos2_in = dot(vec_f0, vec_in)*dot(vec_f0, vec_in)/dist2(vec_f0)/dist2(vec_in);
+		vec_f0.first /= sqrt(dist2(vec_f0));
+		vec_f0.second /= sqrt(dist2(vec_f0));
+		if (type == ToolType::CONVEX) { // 凸透鏡
+			double factor = 0.8;
+			double sin2_out = factor*factor*(1 - cos2_in);
+			double cos2_out = 1 - sin2_out;
+			this->vx = (sqrt(cos2_out)*vec_f0.first-sqrt(sin2_out)*vec_f0.second) * vel;
+			this->vy = (sqrt(sin2_out)*vec_f0.first+sqrt(cos2_out)*vec_f0.second) * vel;
+		} else if (type == ToolType::CONCAVE) { // 凹透鏡
+			double factor = 1.2;
+			double sin2_out = factor*factor*(1 - cos2_in);
+			if (abs(sin2_out) > 1)
+				return true;
+			double cos2_out = 1 - sin2_out;
+			this->vx = (sqrt(cos2_out)*vec_f0.first-sqrt(sin2_out)*vec_f0.second) * vel;
+			this->vy = (sqrt(sin2_out)*vec_f0.first+sqrt(cos2_out)*vec_f0.second) * vel;
 		} else if (type == ToolType::MIRROR) {
-
+			return false;
 		}
 	}
 	return false;

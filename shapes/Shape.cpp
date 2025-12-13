@@ -23,11 +23,12 @@ bool rect_contains_point(const Rectangle *r, const Point *p) {
  * @return 0: 共線 (Collinear), 1: 順時針 (Clockwise), 2: 逆時針 (Counterclockwise)
  */
 int orientation(const Line *l, const Point *r) {
-    // 使用叉積 (Cross Product) 的概念來判斷
-    double val = (l->y2 - l->y1) * (r->x - l->x2) - (l->x2 - l->x1) * (r->y - l->y2);
-    
+    double val = (r->y - l->y1) * (l->x2 - r->x) - (r->x - l->x1) * (l->y2 - r->y);
     // 考慮浮點數誤差
-    if (abs(val) < 1e-6) return 0; 
+    if (abs(val) < 15) {
+        // std::cout << "val: " << val << std::endl;
+        return 0; 
+    }
     
     return (val > 0) ? 1 : 2; 
 }

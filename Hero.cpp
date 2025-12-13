@@ -103,7 +103,7 @@ void Hero::change_skill_state(SkillState new_state){
 }
 
 void Hero::update() {
-    std::cout << "Hero HP: " << HP << "\n";
+    // std::cout << "Hero HP: " << HP << "\n";
     DataCenter *DC = DataCenter::get_instance();
     if (all_skill) {//技能組切換
         if (DC->key_state[ALLEGRO_KEY_1] && !DC->prev_key_state[ALLEGRO_KEY_1]) { 
@@ -184,6 +184,7 @@ void Hero::update() {
                 std :: cout << "to solid!\n";
             }
         } else if (skill_state == SkillState::WAVE) { // 放置道具
+            std::cout << "place tool" << std::endl;
             Tool *tool = new Tool(tool_place, this->tool_angle, this->tool_type);
             DC->tools.emplace_back(tool);
         } else if (skill_state == SkillState::ELECTRIC) { //正負電變化技
@@ -213,7 +214,14 @@ void Hero::update() {
 							   t.y / d * std::max(size.x, size.y) + shape->center_y());
         std::string bullet_path = bullet_gifPath[bullet_state];
 		Bullet *atk = new Bullet(p, t, bullet_path, 480, 1, 750, bullet_state);
-        DC->bullets.emplace_back(atk);
+        if (skill_state == SkillState::SLG)
+            DC->matterBullets.emplace_back(atk);
+        else if (skill_state == SkillState::ELECTRIC)
+            DC->electrodeBullets.emplace_back(atk);
+        else if (skill_state == SkillState::WAVE)
+            DC->waveBullets.emplace_back(atk);
+        else
+            DC->bullets.emplace_back(atk);
     }
     // if (this->is_collid) {
     //     this->is_collid = false;

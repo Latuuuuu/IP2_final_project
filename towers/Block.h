@@ -25,7 +25,7 @@ public:
 	void draw();
 	const BlockState get_state() { return state; }
 	void update_hero_hit(BulletState hero_state);
-	void update_bullet_hit(BulletState hero_state);
+	void update_bullet_hit(BulletState bullet_state, Bullet *bullet);
 	bool alive = true;
 	// void update_matter(BulletState collid_matter); // 剪刀石頭布
 	// void update_force(Point force_source); // 處理引力與斥力
