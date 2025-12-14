@@ -16,7 +16,7 @@ Tool::Tool(const Point &p, const double z, ToolType type) {
 	focus0.y = sin(z)*focal_lenght+p.y;
 	focus1.x = cos(z)*(-focal_lenght)+p.x;
 	focus1.y = sin(z)*(-focal_lenght)+p.y;
-	std::cout << "focus: " << focus0.x << " " << focus0.y << " " << focus1.x << " " << focus1.y << std::endl;
+	// std::cout << "focus: " << focus0.x << " " << focus0.y << " " << focus1.x << " " << focus1.y << std::endl;
 	line->update_center_z(z, p);
 	shape.reset(line);
 	this->type = type;

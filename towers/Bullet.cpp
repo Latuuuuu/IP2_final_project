@@ -144,7 +144,7 @@ bool Bullet::update_wave(int x, int y, double z, ToolType type, std::pair<Point,
 		double sin2_out = factor*factor*(1 - cos2_in);
 		if (sin2_out > 1) {
 			// std::cout << "0" << std::endl;
-			sin2_out = 0.99;
+			sin2_out = 0.95;
 			// return true;
 		}
 		double cos2_out = 1 - sin2_out;

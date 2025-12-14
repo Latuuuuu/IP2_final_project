@@ -184,7 +184,7 @@ void Hero::update() {
                 std :: cout << "to solid!\n";
             }
         } else if (skill_state == SkillState::WAVE) { // 放置道具
-            std::cout << "place tool" << std::endl;
+            // std::cout << "place tool" << std::endl;
             Tool *tool = new Tool(tool_place, this->hero_angle, this->tool_type);
             DC->tools.emplace_back(tool);
         } else if (skill_state == SkillState::ELECTRIC) { //正負電變化技
