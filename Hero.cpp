@@ -239,8 +239,8 @@ void Hero::update() {
     }
     double x = shape->center_x() + (speed_x + adjust_speed_x) / DC->FPS;
     double y = shape->center_y() + (speed_y + adjust_speed_y) / DC->FPS;
-    // if(y > DC->window_height - size.y / 2.0) y = DC->window_height - size.y / 2.0;
-    // else if( y < DC->window_height * 0.2 + size.y / 2.0) y = DC->window_height * 0.2 + size.y / 2.0;
+    if(y > DC->window_height - size.y / 2.0) y = DC->window_height - size.y / 2.0;
+    else if( y < 80 + size.y / 2.0) y = 80 + size.y / 2.0;
     shape->update_center_x(x);
     shape->update_center_y(y);
     speed_x = 0.0;

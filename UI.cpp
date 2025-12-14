@@ -93,16 +93,16 @@ UI_game::update() {
 
 void
 UI_game::draw() {
-	DataCenter *DC = DataCenter::get_instance();
+	// DataCenter *DC = DataCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
 	// const Point &mouse = DC->mouse;
 	// draw HP
-	const int &game_field_length = DC->game_field_length;
-	const int &player_HP = DC->player->HP;
-	int love_width = al_get_bitmap_width(love);
-	for(int i = 1; i <= player_HP; ++i) {
-		al_draw_bitmap(love, game_field_length - (love_width + love_img_padding) * i, love_img_padding, 0);
-	}
+	// const int &game_field_length = DC->game_field_length;
+	// const int &player_HP = DC->player->HP;
+	// int love_width = al_get_bitmap_width(love);
+	// for(int i = 1; i <= player_HP; ++i) {
+	// 	al_draw_bitmap(love, game_field_length - (love_width + love_img_padding) * i, love_img_padding, 0);
+	// }
 	// draw coin
 	// const int &player_coin = DC->player->coin;
 	// al_draw_textf(

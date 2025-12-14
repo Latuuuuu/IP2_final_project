@@ -129,7 +129,7 @@ void OperationCenter::_update_monster_bullet() {
 		// Check if the bullet overlaps with the monster.
 		if (DC->monster->shape->overlap(*(matter_bullets[j]->shape))) {
 			// Reduce the HP of the monster. Delete the bullet.
-			// matter_bullets[j]->update_matter(DC->monster->get_state());
+			matter_bullets[j]->update_matter(DC->monster->get_bullet_state());
 			DC->monster->HP -= matter_bullets[j]->get_dmg();
 			delete matter_bullets[j];
 			matter_bullets.erase(matter_bullets.begin() + j);
@@ -400,11 +400,14 @@ void OperationCenter::draw() {
 
 void OperationCenter::_draw_monster() {
 	MonsterT *monster = DataCenter::get_instance()->monster;
-	if (monster != nullptr)
+	if (monster != nullptr){
 		monster->draw();
+	}
 	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;
 	for(Monster *monster : monsters)
+	{
 		monster->draw();
+	}
 }
 
 void OperationCenter::_draw_bullet() {

@@ -4,6 +4,7 @@
 #include "../Object.h"
 #include "../shapes/Rectangle.h"
 #include "../shapes/Point.h"
+#include "../towers/Bullet.h"
 #include <vector>
 #include <queue>
 #include <ctime>
@@ -20,13 +21,16 @@ enum class Action {
 };
 namespace MonsterSetting {
 	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][40] = {
-		"./assets/image/monster/Monster1",
+		"./assets/gif/monster/Monster1/monster_1",
 		"./assets/image/monster/Monster2",
 		"./assets/image/monster/Monster3",
 		"./assets/image/monster/Monster4"
 	};
 	static constexpr char dir_path_prefix[][10] = {
-		"UP", "DOWN", "LEFT", "RIGHT"
+		"up", "down", "left", "right" //"UP", "DOWN", "LEFT", "RIGHT"
+	};
+	static constexpr char bullet_prefix[][10] = {
+		"", "ice", "water", "vapor"
 	};
 }
 
@@ -39,10 +43,12 @@ public:
 	friend class OperationCenter;
 public:
 	MonsterT(MonsterType type, Point borned_place);
-	void update();
-	void draw();
+	void virtual update();
+	void virtual draw();
 	const int &get_money() const { return money; }
 	int HP;
+	BulletState bullet_state;
+	const BulletState get_bullet_state() { return bullet_state; }
 protected:
 	Point dir_to_vector(const Dir dir);
 	int v;

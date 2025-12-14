@@ -89,6 +89,7 @@ MonsterT::MonsterT(MonsterType type, Point borned_place) {
 	this->need_effect = true;
 	bitmap_img_id = 0;
 	bitmap_switch_counter = 0;
+	bullet_state = BulletState::SOLID;
 }
 void MonsterT::attack() {}
 Point MonsterT::hero_tracker() {
@@ -106,11 +107,14 @@ void MonsterT::update() {
 	// ImageCenter *IC = ImageCenter::get_instance();
 
 	// After a period, the bitmap for this monster should switch from (i)-th image to (i+1)-th image to represent animation.
-	if(bitmap_switch_counter) --bitmap_switch_counter;
-	else {
-		bitmap_img_id = (bitmap_img_id + 1) % (bitmap_img_ids[static_cast<int>(dir)].size());
-		bitmap_switch_counter = bitmap_switch_freq;
-	}
+	int dir_idx = static_cast<int>(dir);
+    if (dir_idx >= 0 && dir_idx < (int)bitmap_img_ids.size() && !bitmap_img_ids[dir_idx].empty()) {
+        if(bitmap_switch_counter) --bitmap_switch_counter;
+        else {
+            bitmap_img_id = (bitmap_img_id + 1) % (bitmap_img_ids[dir_idx].size());
+            bitmap_switch_counter = bitmap_switch_freq;
+        }
+    }
 	// v (velocity) divided by FPS is the actual moving pixels per frame.
 	double movement = v / DC->FPS;
 	// Keep trying to move to next destination in "path" while "path" is not empty and we can still move.
@@ -224,10 +228,11 @@ void MonsterT::draw() {
 	ImageCenter *IC = ImageCenter::get_instance();
 	char buffer[50];
 	sprintf(
-		buffer, "%s/%s_%d.png",
+		buffer, "%s/%s_%d_%s.png",
 		MonsterSetting::monster_imgs_root_path[static_cast<int>(type)],
 		MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
-		bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
+		bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id],
+		MonsterSetting::bullet_prefix[static_cast<int>(bullet_state)]);
 	ALLEGRO_BITMAP *bitmap = IC->get(buffer);
 	Point offset = DC->camera->transform_object(*shape);
 	al_draw_bitmap(
