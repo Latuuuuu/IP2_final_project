@@ -158,11 +158,11 @@ void Hero::update() {
     }
     const Point &hero_center = Point(shape->center_x(), shape->center_y());
     const Point &mouse = DC->camera->camera_to_global(DC->mouse);
-    const double dist = Point::dist(hero_center, mouse) / 80;
-    Point v = Point((mouse.center_x() - hero_center.center_x()) / dist, (mouse.center_y() - hero_center.center_y()) / dist);
-    this->tool_angle = std::atan2(v.center_y(), v.center_x());
+    const double dist = Point::dist(hero_center, mouse);
+    hero_dir = Point((mouse.center_x() - shape->center_x()) / dist, (mouse.center_y() - shape->center_y()) / dist);
+    hero_angle = std::atan2(hero_dir.center_y(), hero_dir.center_x());
+    Point v(hero_dir.center_x() * 80, hero_dir.center_y() * 80);
     tool_place = v + hero_center;
-    // std::cout << tool_place.x << " " << tool_place.y << " " << this->tool_angle << std::endl;
 
     if (DC->mouse_state[2] && !DC->prev_mouse_state[2]) { //右鍵切換形態
         if (skill_state == SkillState::SLG) { //三態變化技
@@ -184,8 +184,8 @@ void Hero::update() {
                 std :: cout << "to solid!\n";
             }
         } else if (skill_state == SkillState::WAVE) { // 放置道具
-            std::cout << "place tool" << std::endl;
-            Tool *tool = new Tool(tool_place, this->tool_angle, this->tool_type);
+            // std::cout << "place tool" << std::endl;
+            Tool *tool = new Tool(tool_place, this->hero_angle, this->tool_type);
             DC->tools.emplace_back(tool);
         } else if (skill_state == SkillState::ELECTRIC) { //正負電變化技
             if (bullet_state == BulletState::POSITIVE) {
@@ -207,13 +207,10 @@ void Hero::update() {
             bullet_state = BulletState::LASER;
             mouse_l_timer = 1;
         }
-        // const Point &p = Point(shape->center_x(), shape->center_y());
-		const Point &t = Point(mouse.center_x() - shape->center_x(), mouse.center_y() - shape->center_y());
-        double d = Point::dist(t);
-        const Point &p = Point(t.x / d * std::max(size.x, size.y) + shape->center_x(),
-							   t.y / d * std::max(size.x, size.y) + shape->center_y());
+        const Point &p = Point(hero_dir.center_x() * std::max(size.x, size.y) + shape->center_x(),
+							   hero_dir.center_y() * std::max(size.x, size.y) + shape->center_y());
         std::string bullet_path = bullet_gifPath[bullet_state];
-		Bullet *atk = new Bullet(p, t, bullet_path, 480, 1, 750, bullet_state);
+		Bullet *atk = new Bullet(p, hero_dir, bullet_path, 480, 1, 750, bullet_state);
         if (skill_state == SkillState::SLG)
             DC->matterBullets.emplace_back(atk);
         else if (skill_state == SkillState::ELECTRIC)
@@ -288,5 +285,5 @@ void Hero::draw_tool_icon() {
 						al_get_bitmap_width(bitmap) / 2.0,
 						al_get_bitmap_height(bitmap) / 2.0,
 						offset.center_x(), 
-						offset.center_y(), this->tool_angle, 0);
+						offset.center_y(), this->hero_angle, 0);
 }
