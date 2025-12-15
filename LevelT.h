@@ -30,7 +30,7 @@ namespace LevelSetting {
 		3476, 6676, 9876, 13076
 	};
 	constexpr int lvl_bound_x[5] = {
-		0, 4600, 7800, 11000, 14200
+		0, 4645, 7800, 11000, 14200
 	};
 	const std::array<std::string, 4> lvl_background_path = {
 		"./assets/image/background/lv1.png", // "./assets/image/background/lv1.png"
@@ -38,7 +38,12 @@ namespace LevelSetting {
 		"./assets/image/lvl_background.png",
 		"./assets/image/lvl_background.png"
 	};
-	const std::string tmp_background_path = "./assets/image/tmp_background.png";
+	const std::array<std::string, 4> buffer_background_path = {
+		"./assets/image/tmp_background.png",
+		"./assets/image/background/lv2_buffer.png", 
+		"./assets/image/tmp_background.png",
+		"./assets/image/tmp_background.png"
+	};
 };
 
 /**

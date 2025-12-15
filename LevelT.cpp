@@ -159,7 +159,7 @@ void LevelT::draw() {
 	for (size_t i = 0; i < 4; ++i) {
 		if (DC->hero->shape->center_x() >= LevelSetting::lvl_bound_x[i] && DC->hero->shape->center_x() < LevelSetting::puzzle_bound_x[i]) {
 			background = IC->get(LevelSetting::lvl_background_path[i]);
-			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+			al_draw_bitmap(IC->get(LevelSetting::buffer_background_path[i]),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_x(),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_y(), 0);
 			al_draw_bitmap(background,
@@ -167,7 +167,7 @@ void LevelT::draw() {
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_y(), 0);
 		} else if (DC->hero->shape->center_x() >= LevelSetting::puzzle_bound_x[i] && DC->hero->shape->center_x() < LevelSetting::lvl_bound_x[i+1] - 640) {
 			background = IC->get(LevelSetting::lvl_background_path[i]);
-			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+			al_draw_bitmap(IC->get(LevelSetting::buffer_background_path[i+1]),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1]-640, 0).center_x(),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1]-640, 0).center_y(), 0);
 			al_draw_bitmap(background,
@@ -178,7 +178,7 @@ void LevelT::draw() {
 			al_draw_bitmap(background,
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_x(),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_y(), 0);
-			al_draw_bitmap(IC->get(LevelSetting::tmp_background_path),
+			al_draw_bitmap(IC->get(LevelSetting::buffer_background_path[i+1]),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1]-640, 0).center_x(),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i+1]-640, 0).center_y(), 0);
 			background = IC->get(LevelSetting::lvl_background_path[i+1]);
