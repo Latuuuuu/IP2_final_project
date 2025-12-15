@@ -67,7 +67,7 @@ public:
 	UI() {}
 	void virtual init() {}
 	int update();
-	void draw();
+	void virtual draw();
 protected:
 	enum class STATE {
 		HALT, // -> SELECT

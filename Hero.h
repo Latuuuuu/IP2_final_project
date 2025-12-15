@@ -36,6 +36,7 @@ public:
     const BulletState get_bullet_state() { return bullet_state; }
     friend class OperationCenter;
     int HP;
+    int max_HP = 500;
     void change_skill_state(SkillState new_state);
     bool all_skill = true; //全技能開關
     void set_adjust_speed(double dx, double dy) { adjust_speed_x = dx; adjust_speed_y = dy; }

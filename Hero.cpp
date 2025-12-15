@@ -55,7 +55,7 @@ void Hero::init(int lvl) {
     size.x = gif->width*0.3;
     size.y = gif->height*0.3;
     this->dmg = 50;
-    this->HP = 500;
+    this->HP = max_HP;
     is_collid = false;
     if (lvl == 0) {
         this->level += 1;
