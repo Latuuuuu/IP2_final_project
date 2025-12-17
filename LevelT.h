@@ -39,7 +39,12 @@ namespace LevelSetting {
 		"./assets/image/lvl_background.png",
 		"./assets/image/lvl4_background.png"
 	};
-	const std::string tmp_background_path = "./assets/image/tmp_background.png";
+	const std::array<std::string, 4> buffer_background_path = {
+		"./assets/image/tmp_background.png",
+		"./assets/image/background/lv2_buffer.png", 
+		"./assets/image/tmp_background.png",
+		"./assets/image/tmp_background.png"
+	};
 };
 
 /**
