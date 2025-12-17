@@ -3,6 +3,7 @@
 
 #include "Object.h"
 #include "shapes/Point.h"
+#include "shapes/Circle.h"
 #include "towers/Bullet.h" //為了拿共用的bullet state
 #include <map>
 #include <string>
@@ -36,14 +37,15 @@ public:
     const BulletState get_bullet_state() { return bullet_state; }
     friend class OperationCenter;
     int HP;
-    int max_HP = 500;
+    int max_HP = 10000;
+    int e;
     void change_skill_state(SkillState new_state);
-    bool all_skill = true; //全技能開關
-    void set_adjust_speed(double dx, double dy) { adjust_speed_x = dx; adjust_speed_y = dy; }
+    bool all_skill = false; //全技能開關
+    void set_adjust_speed(double dx, double dy) { adjust_speed_x += dx; adjust_speed_y += dy; }
 private:
     void apply_skin(int);
     void jump_back(Point obj_point);
-    void draw_tool_icon();
+    void draw_tool_icon(ToolType t);
     HeroState state = HeroState::FRONT;
     SkillState skill_state = SkillState::NORMAL;
     BulletState bullet_state = BulletState::BALL;
@@ -54,6 +56,7 @@ private:
     Point size;
     Point tool_place;
     Point hero_dir;
+    Circle force_shape;
     double hero_angle;
     double speed = 250.0;
     double speed_x = 0.0;

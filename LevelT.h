@@ -6,6 +6,7 @@
 #include <tuple>
 #include "./shapes/Point.h"
 #include "./shapes/Rectangle.h"
+#include "./towers/Bullet.h"
 #include <allegro5/allegro_primitives.h>
 #include <array>
 #include <string>
@@ -21,22 +22,22 @@ namespace LevelSetting {
 	};
 	constexpr int monster_spawn_rate = 90;
 	constexpr int hero_spawn_x[4] = {
-		-320, 4600, 7800, 1100
+		-320, 4660, 7860, 11060
 	};
 	constexpr int puzzle_bound_x[4] = {
-		2816, 6016, 9216, 12416 //1280./
+		2816, 5880, 9080, 11000 //1280./
 	};
 	constexpr int monster_spawn_x[4] = {
-		3476, 6676, 9876, 13076
+		3476, 6520, 9720, 11640
 	};
 	constexpr int lvl_bound_x[5] = {
-		0, 4645, 7800, 11000, 14200
+		0, 4600, 7800, 11000, 12920
 	};
 	const std::array<std::string, 4> lvl_background_path = {
 		"./assets/image/background/lv1.png", // "./assets/image/background/lv1.png"
 		"./assets/image/lvl_background.png", 
 		"./assets/image/lvl_background.png",
-		"./assets/image/lvl_background.png"
+		"./assets/image/lvl4_background.png"
 	};
 	const std::array<std::string, 4> buffer_background_path = {
 		"./assets/image/background/lv1_buffer.png",
@@ -77,7 +78,10 @@ public:
 	bool get_puzzle_solved() { return is_puzzle_solved; }
 	bool get_monster_dead() { return is_monster_dead; }
 	bool get_monster_spawn() { return is_monster_spawn; }
+	bool get_level_start() { return is_level_start; }
+	int get_level() { return level; }
 private:
+	void shooter(Point shooter_pt, Point shoot_vec, BulletState bullet_type);
 	/**
 	 * @brief The index of current level.
 	 */
@@ -95,11 +99,16 @@ private:
 	bool is_puzzle_solved;
 	bool is_monster_dead;
 	bool is_monster_spawn;
+	bool is_level_start;
 	int block_timer = 0;
+	clock_t cd_timer;
+	int shoot_cd;
 	std::mt19937 generator;
 	std::uniform_int_distribution<int> distribution{1, 30};
 	int block_x[16] = {176, 396, 616, 836, 1056, 1144, 1364, 1452, 1672, 1760, 1980, 2068, 2156, 2376, 2464, 2552} ;//68
 	std::deque<int> recent_x_history;
+	Point shooter_pt;
+	Point receive_pt;
 };
 
 #endif

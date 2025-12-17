@@ -42,6 +42,7 @@ private:
 	void _draw_bullet();
 	void _draw_tool();
 	void _draw_block();
+	void _draw_explode(int x, int y, int type);
 };
 
 #endif

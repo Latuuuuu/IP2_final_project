@@ -4,6 +4,7 @@
 #include "MonsterT.h"
 #include "../data/DataCenter.h"
 #include "../data/ImageCenter.h"
+#include <random>
 
 class Monster4 : public MonsterT
 {
@@ -11,9 +12,8 @@ public:
 	Monster4(Point borned_place) : MonsterT(MonsterType::MONSTER4, borned_place) {
 		// DataCenter *DC = DataCenter::get_instance();
 		ImageCenter *IC = ImageCenter::get_instance();
-		HP = 100;
+		HP = max_hp;
 		v = 60;
-		money = 10;
 		bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // UP
 		bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // DOWN
 		bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // LEFT
@@ -32,11 +32,17 @@ public:
 			(shape->center_x() - graph_w / 2.), (shape->center_y() - graph_h / 2.),
 			(shape->center_x() - graph_w / 2. + graph_w), (shape->center_y() - graph_h / 2. + graph_h)
 		});
+		force_shape.r = 300;
+		e = 50;
 	}
+	void draw() override;
 private:
 	void attack() override;
-	int graph_h;
-	int graph_w;
+	std::mt19937 generator;
+	std::uniform_int_distribution<int> distribution{0, 7};
+	int state_timer = 0;
+	int rand_state = 0;
+	int max_hp = 10000;
 };
 
 #endif

@@ -17,13 +17,11 @@ private:
 	void attack() override;
 	BulletState bullet_state = BulletState::SOLID;
 	std::map<Dir, std::string> gifPath;
-	int graph_h;
-	int graph_w;
 	std::mt19937 generator;
 	std::uniform_int_distribution<int> distribution{1, 3};
 	int state_timer = 0;
 	int rand_state = 0;
-	int max_hp = 100;
+	int max_hp = 5000;
 };
 
 #endif

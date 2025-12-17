@@ -1,9 +1,6 @@
 #include "DataCenter.h"
 #include <cstring>
-#include "../Level.h"
 #include "../LevelT.h"
-#include "../Player.h"
-#include "../monsters/Monster.h"
 #include "../monsters/MonsterT.h"
 #include "../towers/Tool.h"
 #include "../towers/Bullet.h"
@@ -29,9 +26,7 @@ DataCenter::DataCenter() {
 	mouse = Point(0, 0);
 	memset(mouse_state, false, sizeof(mouse_state));
 	memset(prev_mouse_state, false, sizeof(prev_mouse_state));
-	player = new Player();
 	level = new LevelT();
-	level_old = new Level();
 	hero = new Hero();
 	camera = new Camera(this->window_width, this->window_height);
 	monster = nullptr;
@@ -39,11 +34,7 @@ DataCenter::DataCenter() {
 
 DataCenter::~DataCenter() {
 	delete camera;
-	delete player;
 	delete level;
-	for(Monster *&m : monsters) {
-		delete m;
-	}
 	delete monster;
 	for(Tool *&t : tools) {
 		delete t;

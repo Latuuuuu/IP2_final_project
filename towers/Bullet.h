@@ -25,11 +25,26 @@ enum class BulletState{ // 使用 enum class 比較安全
 	SOUND,
     BULLETSTATE_MAX
 };
-// enum class WaveType{
-// 	LASER,
-// 	SOUND,
-// 	WAVETYPE_MAX
-// };
+namespace BulletSetting {
+	const std::array<std::string, static_cast<int>(BulletState::BULLETSTATE_MAX)> bullet_paths = {
+		"assets/image/bullet/Normal_Ball.png",
+		"assets/image/bullet/Ice_Ball.png",
+		"assets/image/bullet/Water_Ball.png",
+		"assets/image/bullet/Vapor_Ball.png",
+		"assets/image/bullet/Positive_Ball.png",
+		"assets/image/bullet/Negative_Ball.png",
+		"assets/image/bullet/BeamBullet.png",
+		"assets/image/bullet/SoundBullet.png"
+	};
+	const std::array<int, static_cast<int>(BulletState::BULLETSTATE_MAX)> bullet_dmgs = {
+		10, 50, 50, 50, 50, 50, 5, 0
+	};
+	const std::array<std::string, 3> explode_paths = {
+		"assets/gif/explode.gif",
+		"assets/gif/explode1.gif",
+		"assets/gif/explode2.gif"
+	};
+}
 
 class Bullet : public Object
 {
@@ -42,19 +57,15 @@ public:
 	const int &get_dmg() const { return dmg; }
 	const BulletState get_state() { return state; }
 	void update_matter(BulletState collid_matter); // 剪刀石頭布
-	void update_force(Point force_source); // 處理引力與斥力
 	bool update_electrode(BulletState collid_electrode); // 正負極碰撞的時候要爆炸
 	bool update_wave(int x, int y, double z, ToolType type, std::pair<Point, Point> focal); // 子彈碰到道具要轉彎
 	//
 	Circle force_shape; // 放 public 有點不安全，要考慮改成 private
 	bool alive = true;
 	std::pair<double,double> get_speed() { return std::make_pair(vx, vy); }
-	void set_adjust_speed(double dx, double dy) { vx += dx; vy += dy; }
+	void set_adjust_speed(double dx, double dy) { adjust_speed_x += dx; adjust_speed_y += dy; }
+	int e;
 private:
-	double dot(std::pair<double, double>,std::pair<double, double>);
-	double cross(std::pair<double, double> v1,std::pair<double, double> v2);
-	double dist2(std::pair<double, double> v);
-	void update_line();
 	/**
 	 * @brief Velocity in x direction.
 	 */
@@ -74,6 +85,8 @@ private:
 	/**
 	 * @brief ALLEGRO_BITMAP of the bullet.
 	 */
+	double adjust_speed_x = 0.0;
+    double adjust_speed_y = 0.0;
 	ALLEGRO_BITMAP *bitmap;
     BulletState state;
 };

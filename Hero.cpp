@@ -17,13 +17,6 @@ namespace HeroSetting {
 	};
 }
 
-namespace BulletSetting {
-	static constexpr char hero_imgs_root_path[40] = "./assets/image/bullet";
-	static constexpr char dir_path_postfix[][20] = {
-		"Normal_Ball","Ice_Ball", "Water_Ball", "Vapor_Ball", "Positive_Ball", "Negative_Ball", "BeamBullet", "SoundBullet"
-	};
-}
-
 void Hero::init(int lvl) {
     all_skin_paths.resize(10);
 
@@ -47,7 +40,7 @@ void Hero::init(int lvl) {
     //     gifPath[static_cast<HeroState>(type)] = std::string(HeroSetting::hero_imgs_root_path) + "/slime_"+ HeroSetting::dir_path_postfix[type] + ".gif";
     // }
     for(size_t type = 0; type < static_cast<size_t>(BulletState::BULLETSTATE_MAX); ++type){
-        bullet_gifPath[static_cast<BulletState>(type)] = std::string(BulletSetting::hero_imgs_root_path) + "/" + BulletSetting::dir_path_postfix[type] + ".png";
+        bullet_gifPath[static_cast<BulletState>(type)] = BulletSetting::bullet_paths[type];
     }
     GIFCenter *GIFC = GIFCenter::get_instance();
     ALGIF_ANIMATION *gif = GIFC->get(gifPath[state]);
@@ -66,10 +59,13 @@ void Hero::init(int lvl) {
             LevelSetting::hero_spawn_x[this->level-1] + size.x / 2, DC->window_height / 2 + size.y / 2
         });
     }
-    if (this->level == 2 || this->level == 4)
-        this->max_tool_num = 5;
+    if (this->level == 2 || this->level == 3 || this->level == 4)
+        this->max_tool_num = 7;
     else
         this->max_tool_num = 0;
+    force_shape.x = shape->center_x();
+    force_shape.y = shape->center_y();
+    force_shape.r = 0;
 }
 
 void Hero::jump_back(Point obj_point) {
@@ -84,23 +80,26 @@ void Hero::apply_skin(int idx) {
 }
 
 void Hero::change_skill_state(SkillState new_state){
-    if(skill_state != new_state){
-        if(new_state == SkillState::NORMAL){
-            apply_skin(0);
-            bullet_state = BulletState::BALL;
-        }else if(new_state == SkillState::SLG){
-            apply_skin(2);
-            bullet_state = BulletState::LIQUID;
-        }
-        else if(new_state == SkillState::ELECTRIC){
-            bullet_state = BulletState::POSITIVE;
-        }
-        else if(new_state == SkillState::WAVE){
-            bullet_state = BulletState::LASER;
-            apply_skin(4);
-        }
-        skill_state = new_state;
+    DataCenter *DC = DataCenter::get_instance();
+    // if (skill_state != new_state) {
+    if (new_state == SkillState::NORMAL) {
+        apply_skin(0);
+        bullet_state = BulletState::BALL;
+    } else if(new_state == SkillState::SLG) {
+        apply_skin(2);
+        bullet_state = BulletState::LIQUID;
     }
+    else if (new_state == SkillState::ELECTRIC) {
+        force_shape.r = 200;
+        e = 50;
+        bullet_state = (DC->level->get_puzzle_solved()) ? BulletState::POSITIVE : BulletState::BALL;
+    }
+    else if (new_state == SkillState::WAVE) {
+        apply_skin(4);
+        bullet_state = (DC->level->get_puzzle_solved()) ? BulletState::LASER : BulletState::BALL;
+    }
+    skill_state = new_state;
+    // }
 }
 
 void Hero::update() {
@@ -144,6 +143,15 @@ void Hero::update() {
         tool_type = ToolType::CONVEX;
     } else if (DC->key_state[ALLEGRO_KEY_R] && !DC->prev_key_state[ALLEGRO_KEY_R] && skill_state == SkillState::WAVE && !DC->level->get_monster_spawn()) {
         tool_type = ToolType::MIRROR;
+    } else if (skill_state == SkillState::ELECTRIC && !DC->level->get_monster_spawn()) {
+        // std::cout << "tool type: " << (int)tool_type << std::endl;
+        tool_type = ToolType::E_FIELD;
+    }
+    if (DC->key_state[ALLEGRO_KEY_F] && !DC->prev_key_state[ALLEGRO_KEY_F] && (skill_state == SkillState::WAVE || skill_state == SkillState::ELECTRIC)) {
+        if (!DC->tools.empty()) {
+            delete DC->tools.back();
+            DC->tools.pop_back();
+        }
     }
 
     if(shift_timer >= 0){ //shift 加速 timer
@@ -155,16 +163,21 @@ void Hero::update() {
     }
 
     if(DC->key_state[ALLEGRO_KEY_LSHIFT] && shift_timer<=0){ //shift 加速
-        std :: cout << "fast!\n";
+        std::cout << "fast!\n";
         shift_timer = 60;
         speed = 400.0;
     }
     const Point &hero_center = Point(shape->center_x(), shape->center_y());
     const Point &mouse = DC->camera->camera_to_global(DC->mouse);
     const double dist = Point::dist(hero_center, mouse);
+    int tool_hero_dist;
+    if (tool_type != ToolType::E_FIELD)
+        tool_hero_dist = 80;
+    else
+        tool_hero_dist = 150;
     hero_dir = Point((mouse.center_x() - shape->center_x()) / dist, (mouse.center_y() - shape->center_y()) / dist);
     hero_angle = std::atan2(hero_dir.center_y(), hero_dir.center_x());
-    Point v(hero_dir.center_x() * 80, hero_dir.center_y() * 80);
+    Point v(hero_dir.center_x() * tool_hero_dist, hero_dir.center_y() * tool_hero_dist);
     tool_place = v + hero_center;
 
     if (DC->mouse_state[2] && !DC->prev_mouse_state[2]) { //右鍵切換形態
@@ -192,41 +205,44 @@ void Hero::update() {
             DC->tools.emplace_back(tool);
         } else if (skill_state == SkillState::ELECTRIC) { //正負電變化技
             if (bullet_state == BulletState::POSITIVE) {
+                this->e = -50;
                 bullet_state = BulletState::NEGATIVE;
                 std :: cout << "to negative!\n";
             } else if (bullet_state == BulletState::NEGATIVE) {
+                this->e = 50;
                 bullet_state = BulletState::POSITIVE;
                 std :: cout << "to positive!\n";
             } else {
-                bullet_state = BulletState::POSITIVE;
-                std :: cout << "to positive!\n";
+                this->e = 50;
+                Tool *tool = new Tool(tool_place, this->hero_angle, tool_type);
+                DC->tools.emplace_back(tool);
             }
         }
     }
     
     if(DC->mouse_state[1] && mouse_l_timer <= 0){ //左鍵普攻 
         mouse_l_timer = cd_time;
-        if (skill_state == SkillState::WAVE) {
-            bullet_state = BulletState::LASER;
+        if (skill_state == SkillState::WAVE && DC->level->get_puzzle_solved()) {
             mouse_l_timer = 1;
         }
         const Point &p = Point(hero_dir.center_x() * std::max(size.x, size.y) + shape->center_x(),
 							   hero_dir.center_y() * std::max(size.x, size.y) + shape->center_y());
         std::string bullet_path = bullet_gifPath[bullet_state];
-		Bullet *atk = new Bullet(p, hero_dir, bullet_path, 480, 1, 750, bullet_state);
-        if (skill_state == SkillState::SLG)
+		Bullet *atk = new Bullet(p, hero_dir, bullet_path, 480, BulletSetting::bullet_dmgs[static_cast<int>(bullet_state)], 750, bullet_state);
+        if (bullet_state == BulletState::SOLID || bullet_state == BulletState::LIQUID || bullet_state == BulletState::GAS)
             DC->matterBullets.emplace_back(atk);
-        else if (skill_state == SkillState::ELECTRIC)
+        else if (bullet_state == BulletState::POSITIVE || bullet_state == BulletState::NEGATIVE)
             DC->electrodeBullets.emplace_back(atk);
-        else if (skill_state == SkillState::WAVE)
+        else if (bullet_state == BulletState::LASER || bullet_state == BulletState::SOUND)
             DC->waveBullets.emplace_back(atk);
         else
             DC->bullets.emplace_back(atk);
     }
-    // if (this->is_collid) {
-    //     this->is_collid = false;
-    //     return;
-    // }
+    int sign = 1;
+    if (this->is_collid) {
+        sign = -1;
+        this->is_collid = false;
+    }
     if(DC->key_state[ALLEGRO_KEY_W]){ //上下左右
         speed_y = -speed;
         state = HeroState::BACK;
@@ -240,12 +256,22 @@ void Hero::update() {
         speed_x = speed;
         state = HeroState::RIGHT;
     }
-    double x = shape->center_x() + (speed_x + adjust_speed_x) / DC->FPS;
-    double y = shape->center_y() + (speed_y + adjust_speed_y) / DC->FPS;
-    if(y > DC->window_height - size.y / 2.0) y = DC->window_height - size.y / 2.0;
-    else if( y < 80 + size.y / 2.0) y = 80 + size.y / 2.0;
+    double x = shape->center_x() + (speed_x + adjust_speed_x) * sign / DC->FPS;
+    double y = shape->center_y() + (speed_y + adjust_speed_y) * sign / DC->FPS;
+    if (x > LevelSetting::lvl_bound_x[this->level] - 640 - size.x / 2.0) 
+        x = LevelSetting::lvl_bound_x[this->level] - 640 - size.x / 2.0;
+    else if ( x < LevelSetting::lvl_bound_x[this->level-1] + size.x / 2.0 && DC->level->get_level_start()) 
+        x = LevelSetting::lvl_bound_x[this->level-1] + size.x / 2.0;
+    else if ( x < LevelSetting::puzzle_bound_x[this->level-1] + size.x / 2.0 && DC->level->get_monster_spawn()) 
+        x = LevelSetting::puzzle_bound_x[this->level-1] + size.x / 2.0;
+    if (y > DC->window_height - size.y / 2.0) 
+        y = DC->window_height - size.y / 2.0;
+    else if ( y < 80 + size.y / 2.0) 
+        y = 80 + size.y / 2.0;
     shape->update_center_x(x);
     shape->update_center_y(y);
+    force_shape.update_center_x(x);
+    force_shape.update_center_y(y);
     speed_x = 0.0;
     speed_y = 0.0;
     adjust_speed_x = 0.0; //歸零速度調整
@@ -264,8 +290,9 @@ void Hero::draw() {
         offset.center_y() - gif->height / 2.0,
         0
     );
-    if (skill_state == SkillState::WAVE)
-        draw_tool_icon();
+    if (skill_state == SkillState::WAVE || 
+        (skill_state == SkillState::ELECTRIC && !DC->level->get_monster_spawn()))
+        draw_tool_icon(this->tool_type);
     // 測hitbox用 
     // al_draw_rectangle(
     //     offset.center_x() - size.x / 2.0,
@@ -275,14 +302,14 @@ void Hero::draw() {
     //     al_map_rgb(255, 0, 0), 1.0);
 }
 
-void Hero::draw_tool_icon() {
+void Hero::draw_tool_icon(ToolType t) {
 	DataCenter *DC = DataCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	Point offset = DC->camera->transform_bitmap(tool_place.center_x(), tool_place.center_y());
 	Point hero_pt = DC->camera->transform_object(*shape);
     // std::cout << "tp1:" << offset.x << " " << offset.y << std::endl;
     // std::cout << "hp1:" << hero_pt.x << " " << hero_pt.y << std::endl;
-	std::string path = std::string(ToolSetting::root_path) + "/" + ToolSetting::tool_icon_path[static_cast<int>(this->tool_type)] + ".png";
+	std::string path = std::string(ToolSetting::root_path) + "/" + ToolSetting::tool_icon_path[static_cast<int>(t)] + ".png";
 	ALLEGRO_BITMAP *bitmap = IC->get(path);
     al_draw_rotated_bitmap(bitmap,
 						al_get_bitmap_width(bitmap) / 2.0,
