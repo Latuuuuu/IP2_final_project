@@ -26,16 +26,23 @@ private:
 	OperationCenter() {}
 private:
 	void _update_monster();
-	void _update_tower();
-	void _update_towerBullet();
-	void _update_hero_towerBullet();
-	void _update_monster_towerBullet();
-	// void _update_monster_player();
+	void _update_tool();
+	void _update_bullet();
+	void _update_hero_bullet();
+	void _update_monster_bullet();
+	void _update_bullet_bullet();
+	void _update_tool_bullet();
+	void _update_tool_others();
 	void _update_monster_hero();
+	void _update_block();
+	void _update_hero_block();
+	void _update_bullet_block();
 private:
 	void _draw_monster();
-	void _draw_tower();
-	void _draw_towerBullet();
+	void _draw_bullet();
+	void _draw_tool();
+	void _draw_block();
+	void _draw_explode(int x, int y, int type);
 };
 
 #endif

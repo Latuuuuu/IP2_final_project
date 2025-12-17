@@ -7,15 +7,13 @@
 #include <allegro5/mouse.h>
 #include "../shapes/Point.h"
 
-class Player;
-class Level;
 class LevelT;
-class Monster;
 class MonsterT;
-class Tower;
 class Bullet;
+class Tool;
 class Hero;
 class Camera;
+class Block;
 
 /**
  * @brief Stores generic global data and relatively small data structures.
@@ -76,29 +74,35 @@ public:
 	 * @details For a tower-defense game, coin and health point is enough to represent a player.
 	 * @see Player
 	 */
-	Player *player;
 	/**
 	 * @brief Loads and stores the information of a level.
 	 * @see Level
 	 */
 	LevelT *level;
-	Level *level_old;
 	/**
 	 * @brief Raw list of Monster objects.
 	 * @see Monster
 	 */
-	std::vector<Monster*> monsters;
 	MonsterT* monster;
 	/**
 	 * @brief Raw list of Tower objects.
 	 * @see Tower
 	 */
-	std::vector<Tower*> towers;
+	std::vector<Tool*> tools;
 	/**
 	 * @brief Raw list of Bullet objects.
 	 * @see Bullet
 	 */
-	std::vector<Bullet*> towerBullets;
+	std::vector<Bullet*> bullets;
+	std::vector<Bullet*> matterBullets;
+	std::vector<Bullet*> electrodeBullets;
+	std::vector<Bullet*> waveBullets;
+
+	/**
+	 * @brief Raw list of Block objects.
+	 * @see Block
+	 */
+	std::vector<Block*> blocks;
 
 	Hero *hero;
 	Camera *camera;

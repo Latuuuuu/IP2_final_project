@@ -46,6 +46,7 @@ SoundCenter::update() {
 		for(auto &[path, audio_pair] : samples) {
 			auto &[sample, insts] = audio_pair;
 			for(auto it = insts.begin(); it != insts.end();) {
+				al_set_sample_instance_gain(*it, 1);
 				if(al_get_sample_instance_playing(*it)) ++it;
 				else if(al_get_sample_instance_position(*it) != 0) ++it;
 				else if(al_get_sample_instance_playmode(*it) == ALLEGRO_PLAYMODE_LOOP) ++it;
@@ -102,6 +103,7 @@ SoundCenter::play(const string &path, ALLEGRO_PLAYMODE mode) {
 
 	al_set_sample_instance_playmode(instance, mode);
 	al_attach_sample_instance_to_mixer(instance, al_get_default_mixer());
+	al_set_sample_instance_gain(instance, gain);
 	al_play_sample_instance(instance);
 	return instance;
 }
@@ -124,6 +126,10 @@ SoundCenter::toggle_playing(ALLEGRO_SAMPLE_INSTANCE *inst) {
 		unsigned int pos = al_get_sample_instance_position(inst);
 		al_stop_sample_instance(inst);
 		// As the sample stops, allegro will automatically reset the play position to 0. We need to set it back to be able to resume.
+		al_set_sample_instance_gain(inst, 1);
 		al_set_sample_instance_position(inst, pos);
-	} else al_play_sample_instance(inst);
+	} else {
+		al_set_sample_instance_gain(inst, 1);
+		al_play_sample_instance(inst);
+	}
 }

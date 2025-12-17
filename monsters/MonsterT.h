@@ -4,6 +4,7 @@
 #include "../Object.h"
 #include "../shapes/Rectangle.h"
 #include "../shapes/Point.h"
+#include "../towers/Bullet.h"
 #include <vector>
 #include <queue>
 #include <ctime>
@@ -20,13 +21,16 @@ enum class Action {
 };
 namespace MonsterSetting {
 	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][40] = {
-		"./assets/image/monster/Monster1",
-		"./assets/image/monster/Monster2",
+		"./assets/gif/monster/Monster1/monster_1",
+		"./assets/gif/monster/Monster2/monster_2",
 		"./assets/image/monster/Monster3",
 		"./assets/image/monster/Monster4"
 	};
 	static constexpr char dir_path_prefix[][10] = {
-		"UP", "DOWN", "LEFT", "RIGHT"
+		"UP", "DOWN", "LEFT", "RIGHT" //"UP", "DOWN", "LEFT", "RIGHT"
+	};
+	static constexpr char bullet_prefix[][10] = {
+		"", "ice", "water", "vapor"
 	};
 }
 
@@ -39,14 +43,22 @@ public:
 	friend class OperationCenter;
 public:
 	MonsterT(MonsterType type, Point borned_place);
-	void update();
-	void draw();
-	const int &get_money() const { return money; }
-	int HP;
+	void virtual update();
+	void virtual draw();
+	int HP, last_HP;
+	int e;
+	BulletState bullet_state;
+	const BulletState get_bullet_state() { return bullet_state; }
+	Point get_size() const { return Point(graph_w, graph_h); }
+	void set_adjust_speed(double dx, double dy) { adjust_speed_x += dx; adjust_speed_y += dy; }
 protected:
 	Point dir_to_vector(const Dir dir);
 	int v;
-	int money;
+	int attack_cd;
+	int graph_h;
+	int graph_w;
+	double adjust_speed_x = 0.0;
+    double adjust_speed_y = 0.0;
 	std::vector<std::vector<int>> bitmap_img_ids;
 	int bitmap_switch_counter;
 	int bitmap_switch_freq;
@@ -54,6 +66,8 @@ protected:
 	Action action;
 	Dir dir;
 	MonsterType type;
+	Point size;
+	Circle force_shape;
 private:
 	Dir convert_dir(const Point &v);
 	void virtual attack();
@@ -61,7 +75,6 @@ private:
 	Point position;
 	clock_t timer;
 	clock_t cd_timer;
-	int attack_cd;
 	int action_timer[4];
 	bool need_effect;
 	bool can_attack;

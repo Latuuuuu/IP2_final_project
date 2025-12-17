@@ -26,6 +26,7 @@ public:
 	ALLEGRO_SAMPLE_INSTANCE *play(const std::string &path, ALLEGRO_PLAYMODE mode);
 	bool is_playing(const ALLEGRO_SAMPLE_INSTANCE *const inst);
 	void toggle_playing(ALLEGRO_SAMPLE_INSTANCE *inst);
+	double gain = 0.7;
 private:
 	SoundCenter();
 	/**

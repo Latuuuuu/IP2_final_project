@@ -3,8 +3,11 @@
 
 #include "Object.h"
 #include "shapes/Point.h"
+#include "shapes/Circle.h"
+#include "towers/Bullet.h" //為了拿共用的bullet state
 #include <map>
 #include <string>
+#include <vector>
 
 enum HeroState{
     LEFT,
@@ -14,26 +17,58 @@ enum HeroState{
     HEROSTATE_MAX
 };
 
+enum SkillState{
+    NORMAL,
+    SLG, //solid liguid gas
+    ELECTRIC,
+    WAVE
+};
+
 class OperationCenter;
 
 class Hero : public Object{
 public:
-    void init();
+    void init(int lvl);
     void update();
     void draw() override;
     const int &get_dmg() const { return dmg; }
     const Point get_size() { return size; }
+    const int get_max_tool_num() { return max_tool_num; }
+    const BulletState get_bullet_state() { return bullet_state; }
     friend class OperationCenter;
     int HP;
+    int max_HP = 10000;
+    int e;
+    void change_skill_state(SkillState new_state);
+    bool all_skill = false; //全技能開關
+    void set_adjust_speed(double dx, double dy) { adjust_speed_x += dx; adjust_speed_y += dy; }
 private:
+    void apply_skin(int);
     void jump_back(Point obj_point);
+    void draw_tool_icon(ToolType t);
     HeroState state = HeroState::FRONT;
+    SkillState skill_state = SkillState::NORMAL;
+    BulletState bullet_state = BulletState::BALL;
+    ToolType tool_type = ToolType::CONCAVE;
     std::map<HeroState, std::string> gifPath;
+    std::vector<std::vector<std::string>> all_skin_paths;
+    std::map<BulletState, std::string> bullet_gifPath;
     Point size;
-    double speed = 5.0;
+    Point tool_place;
+    Point hero_dir;
+    Circle force_shape;
+    double hero_angle;
+    double speed = 250.0;
+    double speed_x = 0.0;
+    double speed_y = 0.0;
+    double adjust_speed_x = 0.0;
+    double adjust_speed_y = 0.0;
+    int cd_time = 10;
     int shift_timer = 0,mouse_l_timer = 0;
     int dmg;
     bool is_collid;
+    int max_tool_num;
+    int level;
 };
 
 #endif

@@ -35,6 +35,7 @@ public:
 	Point(int x, int y) :
 		x{static_cast<double>(x)},
 		y{static_cast<double>(y)} {}
+	~Point() {}
 	double x, y;
 };
 

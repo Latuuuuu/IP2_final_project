@@ -6,7 +6,6 @@
 #include "data/ImageCenter.h"
 #include "data/FontCenter.h"
 #include "Camera.h"
-#include "Player.h"
 #include "LevelT.h"
 #include "Hero.h"
 #include "shapes/Point.h"
@@ -21,7 +20,7 @@
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
-constexpr char background_img_path[] = "./assets/image/StartBackground.jpg";
+constexpr char background_img_path[] = "./assets/image/StartBackground.png";
 constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
 
 /**
@@ -209,9 +208,11 @@ bool Game::game_update() {
 			if (button == 0) {
 				// modify difficulty
 			} else if (button == 1) {
-				// modify sound
+				if (SC->gain <= 0.9)
+					SC->gain += 0.1;
 			} else if (button == 2) {
-				// modify music
+				if (SC->gain >= 0.1)
+					SC->gain -= 0.1;
 			} else if (button == 3) {
 				state = STATE::MENU;
 			}
@@ -221,19 +222,19 @@ bool Game::game_update() {
 			button = ui_levels->update();
 			// std::cout << button << std::endl;
 			if (button == 0) {
-				DC->hero->init();
+				DC->hero->init(1);
 				DC->level->load_level(1);
 				state = STATE::LEVEL1;
 			} else if (button == 1) {
-				DC->hero->init();
+				DC->hero->init(2);
 				DC->level->load_level(2);
 				state = STATE::LEVEL2;
 			} else if (button == 2) {
-				DC->hero->init();
+				DC->hero->init(3);
 				DC->level->load_level(3);
 				state = STATE::LEVEL3;
 			} else if (button == 3) {
-				DC->hero->init();
+				DC->hero->init(4);
 				DC->level->load_level(4);
 				state = STATE::LEVEL4;
 			} else if (button == 4) {
@@ -255,11 +256,10 @@ bool Game::game_update() {
 			if (DC->level->get_monster_dead()) {
 				debug_log("<Game> state: change to LEVEL2\n");
 				DC->reset_bullet();
-				DC->hero->init();
+				DC->hero->init(0);
 				DC->level->load_level(2);
 				state = STATE::LEVEL2;
-			}
-			if (DC->hero->HP == 0) {
+			} else if (DC->hero->HP == 0) {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
@@ -280,11 +280,10 @@ bool Game::game_update() {
 			if (DC->level->get_monster_dead()) {
 				debug_log("<Game> state: change to LEVLE3\n");
 				DC->reset_bullet();
-				DC->hero->init();
+				DC->hero->init(0);
 				DC->level->load_level(3);
 				state = STATE::LEVEL3;
-			}
-			if (DC->hero->HP == 0) {
+			} else if (DC->hero->HP == 0) {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
@@ -305,11 +304,10 @@ bool Game::game_update() {
 			if (DC->level->get_monster_dead()) {
 				debug_log("<Game> state: change to LEVEL4\n");
 				DC->reset_bullet();
-				DC->hero->init();
+				DC->hero->init(0);
 				DC->level->load_level(4);
 				state = STATE::LEVEL4;
-			}
-			if (DC->hero->HP == 0) {
+			} else if (DC->hero->HP == 0) {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
@@ -331,8 +329,7 @@ bool Game::game_update() {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
-			}
-			if (DC->hero->HP == 0) {
+			} else if (DC->hero->HP == 0) {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
@@ -340,16 +337,16 @@ bool Game::game_update() {
 			break;
 		} case STATE::PAUSE: {
 			int button = ui_pause->update();
-			if ((DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) || button == 0) {
+			if ((DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) || button == 0) { // resume
 				SC->toggle_playing(background);
 				debug_log("<Game> state: change to last state\n");
 				state = last_state;
-			} else if (button == 1) {
+			} else if (button == 1) { // restart
 				DC->reset_bullet();
-				DC->hero->init();
+				DC->hero->init(level_map[last_state]);
 				DC->level->load_level(level_map[last_state]);
 				state = last_state;
-			} else if (button == 2) {
+			} else if (button == 2) { // to menu
 				DC->reset_bullet();
 				state = STATE::MENU;
 			}
@@ -426,9 +423,9 @@ Game::game_draw() {
 			al_draw_bitmap(background, 0, 0, 0);
 			ui_levels->draw();
 		} else if(state == STATE::LEVEL1 || state == STATE::LEVEL2 || state == STATE::LEVEL3 || state == STATE::LEVEL4) {
-			al_draw_bitmap(background,
-							DC->camera->transform_bitmap(0, 0).center_x(),
-							DC->camera->transform_bitmap(0, 0).center_y(), 0);
+			// al_draw_bitmap(background,
+			// 				DC->camera->transform_bitmap(0, 0).center_x(),
+			// 				DC->camera->transform_bitmap(0, 0).center_y(), 0);
 			DC->camera->update_camera(Point(DC->hero->shape->center_x(),
 											DC->hero->shape->center_y()), 
 									Point(0, 0));
@@ -442,10 +439,10 @@ Game::game_draw() {
 							DC->camera->transform_bitmap(0, 0).center_y(), 0);
 			DC->level->draw();
 			DC->hero->draw();
-			ui_pause->draw();
 			OC->draw();
 			// game layout cover
-			al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(50, 50, 50, 64));
+			al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(30, 30, 30, 80));
+			ui_pause->draw();
 			al_draw_text(
 				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
 				DC->window_width/2., DC->window_height/2.,

@@ -2,7 +2,8 @@
 #define GAME_H_INCLUDED
 
 #include <allegro5/allegro.h>
-#include "UI.h"
+// #include "UI.h"
+#include "UI_game.h"
 #include "UI_menu.h"
 #include "UI_levels.h"
 #include "UI_setting.h"
