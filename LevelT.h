@@ -22,7 +22,7 @@ namespace LevelSetting {
 	};
 	constexpr int monster_spawn_rate = 90;
 	constexpr int hero_spawn_x[4] = {
-		60, 4705, 7828, 10837
+		-320, 4705, 7828, 10837
 	};
 	constexpr int puzzle_bound_x[4] = {
 		2816, 5895, 8858, 10777 //1280./
@@ -40,10 +40,16 @@ namespace LevelSetting {
 		"./assets/image/lvl4_background.png"
 	};
 	const std::array<std::string, 4> buffer_background_path = {
-		"./assets/image/tmp_background.png",
+		"./assets/image/background/lv1_buffer.png",
 		"./assets/image/background/lv2_buffer.png", 
 		"./assets/image/background/lv3_buffer.png",
 		"./assets/image/tmp_background.png"
+	};
+	const std::array<std::string, 4> instruction_path = {
+		"./assets/image/instruction/lv1_instruction.png",
+		"./assets/image/instruction/lv1_instruction.png", 
+		"./assets/image/instruction/lv1_instruction.png",
+		"./assets/image/instruction/lv1_instruction.png"
 	};
 };
 

@@ -22,7 +22,7 @@ enum class Action {
 namespace MonsterSetting {
 	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][40] = {
 		"./assets/gif/monster/Monster1/monster_1",
-		"./assets/image/monster/Monster2",
+		"./assets/gif/monster/Monster2/monster_2",
 		"./assets/image/monster/Monster3",
 		"./assets/image/monster/Monster4"
 	};

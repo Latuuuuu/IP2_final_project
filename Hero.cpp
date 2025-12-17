@@ -20,7 +20,7 @@ namespace HeroSetting {
 void Hero::init(int lvl) {
     all_skin_paths.resize(10);
 
-    std::vector<std::string> bullet_prefixes= { "slime", "ice", "water", "vapor", "beam"};
+    std::vector<std::string> bullet_prefixes= { "slime", "ice", "water", "vapor", "beam", "negative", "positive"};
     for (int s = 0; s < (int)bullet_prefixes.size(); ++s) {
         all_skin_paths[s].resize(static_cast<int>(HeroState::HEROSTATE_MAX));
         
@@ -88,12 +88,12 @@ void Hero::change_skill_state(SkillState new_state){
     } else if(new_state == SkillState::SLG) {
         apply_skin(2);
         bullet_state = BulletState::LIQUID;
-    }
-    else if (new_state == SkillState::ELECTRIC && DC->level->get_puzzle_solved()) {
-        force_shape.r = 200;
-        bullet_state = BulletState::POSITIVE;
-    }
-    else if (new_state == SkillState::WAVE) {
+    } else if (new_state == SkillState::ELECTRIC) {
+        if (DC->level->get_puzzle_solved()) {
+            force_shape.r = 200;
+            bullet_state = BulletState::POSITIVE;
+        }
+    } else if (new_state == SkillState::WAVE) {
         apply_skin(4);
         bullet_state = (DC->level->get_puzzle_solved()) ? BulletState::LASER : BulletState::BALL;
         tool_type = ToolType::CONCAVE;
@@ -136,6 +136,7 @@ void Hero::update() {
             } else {
                 skill_state = SkillState::ELECTRIC;
                 bullet_state = BulletState::POSITIVE;
+                apply_skin(6);
             }
         }
     }
@@ -209,10 +210,12 @@ void Hero::update() {
             DC->tools.emplace_back(tool);
         } else if (skill_state == SkillState::ELECTRIC) { //正負電變化技
             if (bullet_state == BulletState::POSITIVE) {
+                apply_skin(5);
                 this->e = -50;
                 bullet_state = BulletState::NEGATIVE;
                 std :: cout << "to negative!\n";
             } else if (bullet_state == BulletState::NEGATIVE) {
+                apply_skin(6);
                 this->e = 50;
                 bullet_state = BulletState::POSITIVE;
                 std :: cout << "to positive!\n";

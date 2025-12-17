@@ -23,16 +23,16 @@ public:
 		DataCenter *DC = DataCenter::get_instance();
 		ImageCenter *IC = ImageCenter::get_instance();
 		int tl_x = DC->game_field_length + button_img_left_padding;
-		int tl_y = button_img_top_padding;
+		int tl_y = button_img_top_padding_set;
 		int max_height = 0;
 		// arrange tower shop
 		for(size_t i = 0; i < (size_t)(SettingSetting::ButtonType::BUTTON_MAX); ++i) {
 			ALLEGRO_BITMAP *bitmap = IC->get(SettingSetting::button_img_path[i]);
 			int w = al_get_bitmap_width(bitmap);
 			int h = al_get_bitmap_height(bitmap);
-			if(tl_x + w > DC->window_width) {
+			if(tl_x + w + 100 > DC->window_width) {
 				tl_x = DC->game_field_length + button_img_left_padding;
-				tl_y += max_height + button_img_top_padding;
+				tl_y += max_height + button_img_h_padding_set;
 				max_height = 0;
 			}
 			button_items.emplace_back(bitmap, Point{tl_x, tl_y});
