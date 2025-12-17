@@ -216,6 +216,8 @@ void MonsterT::update() {
     shape->update_center_y(y);
     force_shape.update_center_x(x);
     force_shape.update_center_y(y);
+	adjust_speed_x = 0.0;
+	adjust_speed_y = 0.0;
 	last_HP = HP;
 }
 

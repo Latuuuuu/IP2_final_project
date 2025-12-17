@@ -21,7 +21,6 @@ Monster1::Monster1(Point borned_place) : MonsterT(MonsterType::MONSTER1, borned_
     GIFCenter *GIFC = GIFCenter::get_instance();
 	HP = max_hp;
 	v = 60;
-	money = 10;
 	int monster_type_idx = static_cast<int>(MonsterType::MONSTER1);
     for(size_t type = 0; type <= static_cast<size_t>(Dir::RIGHT); ++type){
         // Construct path: ./assets/image/monster/Monster1_UP.gif

@@ -37,7 +37,7 @@ namespace BulletSetting {
 		"assets/image/bullet/SoundBullet.png"
 	};
 	const std::array<int, static_cast<int>(BulletState::BULLETSTATE_MAX)> bullet_dmgs = {
-		10, 50, 50, 50, 50, 50, 1, 0
+		10, 50, 50, 50, 50, 50, 5, 0
 	};
 	const std::array<std::string, 3> explode_paths = {
 		"assets/gif/explode.gif",
@@ -63,7 +63,7 @@ public:
 	Circle force_shape; // 放 public 有點不安全，要考慮改成 private
 	bool alive = true;
 	std::pair<double,double> get_speed() { return std::make_pair(vx, vy); }
-	void set_adjust_speed(double dx, double dy) { vx += dx; vy += dy; }
+	void set_adjust_speed(double dx, double dy) { adjust_speed_x += dx; adjust_speed_y += dy; }
 	int e;
 private:
 	/**
@@ -85,6 +85,8 @@ private:
 	/**
 	 * @brief ALLEGRO_BITMAP of the bullet.
 	 */
+	double adjust_speed_x = 0.0;
+    double adjust_speed_y = 0.0;
 	ALLEGRO_BITMAP *bitmap;
     BulletState state;
 };

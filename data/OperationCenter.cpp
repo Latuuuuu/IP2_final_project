@@ -2,7 +2,6 @@
 #include "../algif5/algif.h"
 #include "GIFCenter.h"
 #include "DataCenter.h"
-#include "../monsters/Monster.h"
 #include "../monsters/MonsterT.h"
 #include "../towers/Bullet.h"
 #include "../towers/Block.h"
@@ -380,7 +379,7 @@ void OperationCenter::_update_tool_bullet() {
 		for (size_t j = 0; j < tools.size(); ++j) {
 			if (eletrode_bullets[i]->shape->overlap(*tools[j]->shape) &&
 				tools[j]->get_type() == ToolType::E_FIELD) {
-				std::cout << "tool&bulet" << std::endl;
+				// std::cout << "tool&bulet" << std::endl;
 				// reaction
 				double mass_e = 20.0;
 				std::pair<double, double> f = tools[j]->get_e_force();

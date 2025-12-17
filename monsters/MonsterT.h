@@ -45,17 +45,15 @@ public:
 	MonsterT(MonsterType type, Point borned_place);
 	void virtual update();
 	void virtual draw();
-	const int &get_money() const { return money; }
 	int HP, last_HP;
 	int e;
 	BulletState bullet_state;
 	const BulletState get_bullet_state() { return bullet_state; }
 	Point get_size() const { return Point(graph_w, graph_h); }
-	void set_adjust_speed(double dx, double dy) { adjust_speed_x = dx; adjust_speed_y = dy; }
+	void set_adjust_speed(double dx, double dy) { adjust_speed_x += dx; adjust_speed_y += dy; }
 protected:
 	Point dir_to_vector(const Dir dir);
 	int v;
-	int money;
 	int attack_cd;
 	int graph_h;
 	int graph_w;

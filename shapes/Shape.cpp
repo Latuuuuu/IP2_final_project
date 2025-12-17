@@ -54,7 +54,7 @@ double dist_line_circle(const Line *l, const Circle *c) {
 int orientation(const Line *l, const Point *r) {
     double val = (r->y - l->y1) * (l->x2 - r->x) - (r->x - l->x1) * (l->y2 - r->y);
     // 考慮浮點數誤差
-    if (abs(val) < 15) {
+    if (abs(val) < 20) {
         // std::cout << "val: " << val << std::endl;
         return 0; 
     }
@@ -62,10 +62,21 @@ int orientation(const Line *l, const Point *r) {
     return (val > 0) ? 1 : 2; 
 }
 
+bool checkOverlap(const Point *p, const Line *l) {
+	return ((p->x <= max(l->x1, l->x2) && p->x >= min(l->x1, l->x2) && // x 在線段範圍內
+            p->y <= max(l->y1, l->y2) && p->y >= min(l->y1, l->y2)) && // y 在線段範圍內
+			orientation(l, p) == 0); // 共線
+}
+
 bool checkOverlap(const Point *p, const Square *s) {
     bool result = false;
     if (orientation(s->edge_up, p) != orientation(s->edge_down, p) &&
         orientation(s->edge_right, p) != orientation(s->edge_left, p))
+        result = true;
+    if (checkOverlap(p, s->edge_up) || 
+        checkOverlap(p, s->edge_right) ||
+        checkOverlap(p, s->edge_down) ||
+        checkOverlap(p, s->edge_left))
         result = true;
     return result;
 }
@@ -116,13 +127,7 @@ bool checkOverlap(const Point *p, const Rectangle *r) {
 }
 
 bool checkOverlap(const Point *p, const Circle *c) {
-	return (c->r * c->r) <= Point::dist2((*p), Point(c->x, c->y));
-}
-
-bool checkOverlap(const Point *p, const Line *l) {
-	return ((p->x <= max(l->x1, l->x2) && p->x >= min(l->x1, l->x2) && // x 在線段範圍內
-            p->y <= max(l->y1, l->y2) && p->y >= min(l->y1, l->y2)) && // y 在線段範圍內
-			orientation(l, p) == 0); // 共線
+	return (c->r * c->r) >= Point::dist2((*p), Point(c->x, c->y));
 }
 
 bool checkOverlap(const Rectangle *r1, const Rectangle *r2) {
@@ -139,8 +144,8 @@ bool checkOverlap(const Rectangle *r, const Line *l) {
     // 1. Trivial Acceptance Check: 檢查線段的任一端點是否在矩形內部
     auto p1_ptr = std::make_unique<Point>(l->x1, l->y1);
     auto p2_ptr = std::make_unique<Point>(l->x2, l->y2);
-    if (rect_contains_point(r, p1_ptr.get()) || 
-        rect_contains_point(r, p2_ptr.get())) {
+    if (checkOverlap(p1_ptr.get(), r) || 
+        checkOverlap(p2_ptr.get(), r)) {
         return true;
     }
 
@@ -213,11 +218,7 @@ bool checkOverlap(const Circle *c, const Square *s) {
         checkOverlap(p3_ptr.get(),c) ||
         checkOverlap(p4_ptr.get(),c))
         result = true;
-    else if (checkOverlap(p5_ptr.get(),s) && 
-            (dist_line_circle(s->edge_up,c) >= c->r ||
-            dist_line_circle(s->edge_right,c) >= c->r ||
-            dist_line_circle(s->edge_down,c) >= c->r ||
-            dist_line_circle(s->edge_left,c) >= c->r))
+    if (checkOverlap(p5_ptr.get(),s))
         result = true;
     return result;
 }

@@ -146,7 +146,8 @@ void Hero::update() {
     } else if (skill_state == SkillState::ELECTRIC && !DC->level->get_monster_spawn()) {
         // std::cout << "tool type: " << (int)tool_type << std::endl;
         tool_type = ToolType::E_FIELD;
-    } else if (DC->key_state[ALLEGRO_KEY_F] && !DC->prev_key_state[ALLEGRO_KEY_F] && (skill_state == SkillState::WAVE || skill_state == SkillState::ELECTRIC)) {
+    }
+    if (DC->key_state[ALLEGRO_KEY_F] && !DC->prev_key_state[ALLEGRO_KEY_F] && (skill_state == SkillState::WAVE || skill_state == SkillState::ELECTRIC)) {
         if (!DC->tools.empty()) {
             delete DC->tools.back();
             DC->tools.pop_back();

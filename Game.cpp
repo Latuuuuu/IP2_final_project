@@ -6,7 +6,6 @@
 #include "data/ImageCenter.h"
 #include "data/FontCenter.h"
 #include "Camera.h"
-#include "Player.h"
 #include "LevelT.h"
 #include "Hero.h"
 #include "shapes/Point.h"
@@ -260,8 +259,7 @@ bool Game::game_update() {
 				DC->hero->init(0);
 				DC->level->load_level(2);
 				state = STATE::LEVEL2;
-			}
-			if (DC->hero->HP == 0) {
+			} else if (DC->hero->HP == 0) {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
@@ -285,8 +283,7 @@ bool Game::game_update() {
 				DC->hero->init(0);
 				DC->level->load_level(3);
 				state = STATE::LEVEL3;
-			}
-			if (DC->hero->HP == 0) {
+			} else if (DC->hero->HP == 0) {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
@@ -310,8 +307,7 @@ bool Game::game_update() {
 				DC->hero->init(0);
 				DC->level->load_level(4);
 				state = STATE::LEVEL4;
-			}
-			if (DC->hero->HP == 0) {
+			} else if (DC->hero->HP == 0) {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
@@ -333,8 +329,7 @@ bool Game::game_update() {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;
-			}
-			if (DC->hero->HP == 0) {
+			} else if (DC->hero->HP == 0) {
 				debug_log("<Game> state: change to MENU\n");
 				DC->reset_bullet();
 				state = STATE::MENU;

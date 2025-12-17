@@ -41,7 +41,7 @@ public:
     int e;
     void change_skill_state(SkillState new_state);
     bool all_skill = false; //全技能開關
-    void set_adjust_speed(double dx, double dy) { adjust_speed_x = dx; adjust_speed_y = dy; }
+    void set_adjust_speed(double dx, double dy) { adjust_speed_x += dx; adjust_speed_y += dy; }
 private:
     void apply_skin(int);
     void jump_back(Point obj_point);

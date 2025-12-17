@@ -7,12 +7,8 @@
 #include <allegro5/mouse.h>
 #include "../shapes/Point.h"
 
-class Player;
-class Level;
 class LevelT;
-class Monster;
 class MonsterT;
-class Tower;
 class Bullet;
 class Tool;
 class Hero;
@@ -78,18 +74,15 @@ public:
 	 * @details For a tower-defense game, coin and health point is enough to represent a player.
 	 * @see Player
 	 */
-	Player *player;
 	/**
 	 * @brief Loads and stores the information of a level.
 	 * @see Level
 	 */
 	LevelT *level;
-	Level *level_old;
 	/**
 	 * @brief Raw list of Monster objects.
 	 * @see Monster
 	 */
-	std::vector<Monster*> monsters;
 	MonsterT* monster;
 	/**
 	 * @brief Raw list of Tower objects.

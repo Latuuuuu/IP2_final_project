@@ -61,8 +61,12 @@ void
 Bullet::update() {
 	if(fly_dist == 0) return;
 	DataCenter *DC = DataCenter::get_instance();
-	double dx = vx / DC->FPS;
-	double dy = vy / DC->FPS;
+	vx = (vx + adjust_speed_x);
+	vy = (vy + adjust_speed_y);
+	adjust_speed_x = 0;
+	adjust_speed_y = 0;
+	double dx = (vx + adjust_speed_x) / DC->FPS;
+	double dy = (vy + adjust_speed_y) / DC->FPS;
 	double movement = Point::dist(Point{dx, dy}, Point{0, 0});
 	if(fly_dist > movement) {
 		shape->update_center_x(shape->center_x() + dx);

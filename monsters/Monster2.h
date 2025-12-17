@@ -13,9 +13,8 @@ public:
 	Monster2(Point borned_place) : MonsterT(MonsterType::MONSTER2, borned_place) {
 		// DataCenter *DC = DataCenter::get_instance();
 		ImageCenter *IC = ImageCenter::get_instance();
-		HP = 5000;
+		HP = max_hp;
 		v = 60;
-		money = 10;
 		attack_cd = 1;
 		bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // UP
 		bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // DOWN
@@ -44,7 +43,7 @@ private:
 	std::uniform_int_distribution<int> distribution{6, 7};
 	int state_timer = 0;
 	int rand_state = 0;
-	int max_hp = 100;
+	int max_hp = 5000;
 };
 
 #endif
