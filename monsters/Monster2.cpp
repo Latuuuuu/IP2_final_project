@@ -2,11 +2,37 @@
 #include "../Hero.h"
 #include "../Camera.h"
 #include "../towers/Bullet.h"
+#include "../data/GIFCenter.h"
 #include <allegro5/bitmap_draw.h>
 #include <allegro5/allegro_primitives.h>
 #include <iostream>
 
 using namespace std;
+
+Monster2::Monster2(Point borned_place) : MonsterT(MonsterType::MONSTER2, borned_place) {
+	// DataCenter *DC = DataCenter::get_instance();
+	GIFCenter *GIFC = GIFCenter::get_instance();
+	HP = max_hp;
+	v = 60;
+	int monster_type_idx = static_cast<int>(MonsterType::MONSTER2);
+    for(size_t type = 0; type <= static_cast<size_t>(Dir::RIGHT); ++type){
+        // Construct path: ./assets/image/monster/Monster1_UP.gif
+        string dir_str = MonsterSetting::dir_path_prefix[type];
+        gifPath[static_cast<Dir>(type)] = string(MonsterSetting::monster_imgs_root_path[monster_type_idx]) + "_" + dir_str + ".gif";
+        
+        // Pre-load GIF
+        GIFC->get(gifPath[static_cast<Dir>(type)]);
+    }
+	attack_cd = 1;
+	ALGIF_ANIMATION *gif = GIFC->get(gifPath[static_cast<Dir>(dir)]);
+	graph_w = gif->width * 0.5;
+	graph_h = gif->height * 0.5;
+	shape.reset(new Rectangle{
+		(shape->center_x() - graph_w / 2.), (shape->center_y() - graph_h / 2.),
+		(shape->center_x() + graph_w / 2.), (shape->center_y() + graph_h / 2.)
+	});
+	force_shape.r = 0;
+}
 
 void Monster2::attack() {
 	DataCenter *DC = DataCenter::get_instance();
@@ -37,21 +63,15 @@ void Monster2::attack() {
 
 void Monster2::draw() {
 	DataCenter *DC = DataCenter::get_instance();
-	ImageCenter *IC = ImageCenter::get_instance();
+	GIFCenter *GIFC = GIFCenter::get_instance();
 	// draw bitmap
 	// TODO: change to gif
-	char buffer[50];
-	sprintf(
-		buffer, "%s/%s_%d.png",
-		MonsterSetting::monster_imgs_root_path[static_cast<int>(type)],
-		MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
-		bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
-	ALLEGRO_BITMAP *bitmap = IC->get(buffer);
+	ALGIF_ANIMATION *gif = GIFC->get(gifPath[static_cast<Dir>(dir)]);
 	Point offset = DC->camera->transform_object(*shape);
-	al_draw_bitmap(
-		bitmap,
-		offset.center_x() - al_get_bitmap_width(bitmap) / 2,
-		offset.center_y() - al_get_bitmap_height(bitmap) / 2, 0);
+	algif_draw_gif(
+		gif,
+		offset.center_x() - gif->width / 2,
+		offset.center_y() - gif->height / 2 + 15 , 0);
 
 	// draw UI, bar will turn red if it is attacked
 	ALLEGRO_COLOR bar_color;
