@@ -7,7 +7,7 @@
 #include "../data/ImageCenter.h"
 #include "../Hero.h"
 #include "../towers/Bullet.h"
-// #include "../Level.h"
+#include "../LevelT.h"
 #include "../Camera.h"
 #include "../shapes/Point.h"
 #include "../shapes/Rectangle.h"
@@ -73,8 +73,11 @@ Point MonsterT::dir_to_vector(const Dir dir) {
 }
 
 MonsterT::MonsterT(MonsterType type, Point borned_place) {
-
 	shape.reset(new Rectangle{borned_place.x, borned_place.y, borned_place.x, borned_place.y});
+	force_shape.x = borned_place.x;
+	force_shape.y = borned_place.y;
+	force_shape.r = 0;
+	e = 0;
 	this->type = type;
 	this->action = Action::IDLE;
 	this->action_timer[0] = 5000;
@@ -89,7 +92,6 @@ MonsterT::MonsterT(MonsterType type, Point borned_place) {
 	this->need_effect = true;
 	bitmap_img_id = 0;
 	bitmap_switch_counter = 0;
-	bullet_state = BulletState::SOLID;
 }
 void MonsterT::attack() {}
 Point MonsterT::hero_tracker() {
@@ -166,12 +168,12 @@ void MonsterT::update() {
 		can_attack = true;
 		// follow hero
 		dir = convert_dir(Point{dx, dy});
-		if (!is_collid) {
-			shape->update_center_x(shape->center_x() + dx * movement);
-			shape->update_center_y(shape->center_y() + dy * movement);
-		} else {
-			is_collid = false;
-		}
+		dx = dx * movement + adjust_speed_x / DC->FPS;
+		dy = dy * movement + adjust_speed_y / DC->FPS;
+		// if (this->is_collid) {
+		// 	sign = -1;
+		// 	this->is_collid = false;
+		// }
 		// cout << "update pose" << endl;
 		// cout << shape->center_x() << " " << shape->center_y() << endl;
 		if ((int)(clock() - this->timer) >= action_timer[(int)Action::CHASE]) {
@@ -190,12 +192,6 @@ void MonsterT::update() {
 		dx *= this->dist_to_hero - DC->hero->get_size().center_x() * 1.5;
 		dy *= this->dist_to_hero - DC->hero->get_size().center_y() * 1.5;
 		// cout << "(dx, dy): " << dx << ", " << dy << endl;
-		if (!is_collid) {
-			shape->update_center_x(shape->center_x() + dx);
-			shape->update_center_y(shape->center_y() + dy);
-		} else {
-			is_collid = false;
-		}
 		// display transport effect
 		this->can_attack = false;
 		this->action = Action::STAND;
@@ -204,23 +200,23 @@ void MonsterT::update() {
 	default:
 		break;
 	}
-	// // Update real hit box for monster.
-	// char buffer[50];
-	// sprintf(
-	// 	buffer, "%s/%s_%d.png",
-	// 	MonsterSetting::monster_imgs_root_path[static_cast<int>(type)],
-	// 	MonsterSetting::dir_path_prefix[static_cast<int>(dir)],
-	// 	bitmap_img_ids[static_cast<int>(dir)][bitmap_img_id]);
-	// ALLEGRO_BITMAP *bitmap = IC->get(buffer);
-	// const double &cx = shape->center_x();
-	// const double &cy = shape->center_y();
-	// // We set the hit box slightly smaller than the actual bounding box of the image because there are mostly empty spaces near the edge of a image.
-	// const int &h = al_get_bitmap_width(bitmap) * 0.8;
-	// const int &w = al_get_bitmap_height(bitmap) * 0.8;
-	// shape.reset(new Rectangle{
-	// 	(cx - w / 2.), (cy - h / 2.),
-	// 	(cx - w / 2. + w), (cy - h / 2. + h)
-	// });
+	double x = shape->center_x() + dx;
+	double y = shape->center_y() + dy;
+	if (x > LevelSetting::lvl_bound_x[static_cast<int>(this->type)+1] - 640 - size.center_x()) {
+		x = LevelSetting::lvl_bound_x[static_cast<int>(this->type)+1] - 640 - size.center_x();
+	} else if (x < LevelSetting::puzzle_bound_x[static_cast<int>(this->type)] + size.center_x()) {
+		x = LevelSetting::puzzle_bound_x[static_cast<int>(this->type)] + size.center_x();
+	}
+	if (y > DC->window_height - size.center_y()) {
+		y = DC->window_height - size.center_y();
+	} else if (shape->center_y() + dy < + size.center_y()) {
+		y = size.center_y();
+	}
+	shape->update_center_x(x);
+    shape->update_center_y(y);
+    force_shape.update_center_x(x);
+    force_shape.update_center_y(y);
+	last_HP = HP;
 }
 
 void MonsterT::draw() {

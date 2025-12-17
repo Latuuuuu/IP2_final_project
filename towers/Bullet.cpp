@@ -3,10 +3,12 @@
 #include "../data/ImageCenter.h"
 #include "../Camera.h"
 #include "../shapes/Point.h"
+#include "../LevelT.h"
 #include <cmath>
 #include <algorithm>
 #include <allegro5/bitmap_draw.h>
 #include <allegro5/allegro_primitives.h>
+#include "../physics.hpp"
 
 Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, double v, int dmg, double fly_dist) {
 	ImageCenter *IC = ImageCenter::get_instance();
@@ -20,6 +22,10 @@ Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, dou
 	vx = vector.x * v / d;
 	vy = vector.y * v / d;
     this->state = BulletState::BALL;
+	this->e = 0;
+	force_shape.x = p.x;
+	force_shape.y = p.y;
+	force_shape.r = 0;
 }
 
 Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, double v, int dmg, double fly_dist, BulletState state) {
@@ -33,6 +39,17 @@ Bullet::Bullet(const Point &p, const Point &vector, const std::string &path, dou
 	vx = vector.x * v / d;
 	vy = vector.y * v / d;
     this->state = state;
+	force_shape.x = p.x;
+	force_shape.y = p.y;
+	force_shape.r = 0;
+	if (this->state == BulletState::POSITIVE) {
+		force_shape.r = 40;
+		this->e = 10;
+	}
+	else if (this->state == BulletState::NEGATIVE) {
+		force_shape.r = 40;
+		this->e = -10;
+	}
 	shape.reset(new Circle{p.x, p.y, r});
 }
 
@@ -50,12 +67,22 @@ Bullet::update() {
 	if(fly_dist > movement) {
 		shape->update_center_x(shape->center_x() + dx);
 		shape->update_center_y(shape->center_y() + dy);
+		force_shape.update_center_x(shape->center_x() + dx);
+		force_shape.update_center_y(shape->center_y() + dy);
 		fly_dist -= movement;
 	} else {
 		shape->update_center_x(shape->center_x() + dx * fly_dist / movement);
 		shape->update_center_y(shape->center_y() + dy * fly_dist / movement);
+		force_shape.update_center_x(shape->center_x() + dx * fly_dist / movement);
+		force_shape.update_center_y(shape->center_y() + dy * fly_dist / movement);
 		fly_dist = 0;
 	}
+	if ((shape->center_x() + dx > LevelSetting::lvl_bound_x[DC->level->get_level()] - 640) ||
+		(shape->center_x() + dx < LevelSetting::lvl_bound_x[DC->level->get_level()-1] && DC->level->get_level_start()) ||
+		(shape->center_x() + dx < LevelSetting::puzzle_bound_x[DC->level->get_level()-1] && DC->level->get_monster_spawn()) ||
+		(shape->center_y() + dy > DC->window_height) ||
+		(shape->center_y() + dy < 0))
+        this->alive = false;
 }
 
 void Bullet::update_matter(BulletState collid_matter) {  // 第一關子彈的剪刀石頭布
@@ -73,17 +100,9 @@ void Bullet::update_matter(BulletState collid_matter) {  // 第一關子彈的�
 	// 判斷兩個都是同樣的物質型態，讓速度變 0
 }
 
-double Bullet::dot(std::pair<double, double> v1,std::pair<double, double> v2) {
-	return v1.first*v2.first+v1.second*v2.second;
-}
-double Bullet::cross(std::pair<double, double> v1,std::pair<double, double> v2) {
-	return -v1.first*v2.second+v1.second*v2.first;
-}
-double Bullet::dist2(std::pair<double, double> v) {
-	return v.first*v.first+v.second*v.second;
-}
-
 bool Bullet::update_wave(int x, int y, double z, ToolType type, std::pair<Point, Point> focal) { // 第二關，撞到道具時的動作
+	if (type == ToolType::E_FIELD) // 如果是電場，不要與光波&聲波交互
+		return false;
 	if (this->state == BulletState::SOUND) {
 		return true; // need to destroy collided tool
 	}
@@ -135,7 +154,9 @@ bool Bullet::update_wave(int x, int y, double z, ToolType type, std::pair<Point,
 			vec_f = vec_f1;
 		} else if (type == ToolType::CONCAVE) { // 凹透鏡
 			vec_f = vec_f0;
-		} 
+		} else { // 不是透鏡也不是鏡子
+			return false;
+		}
 		cos2_in = dot(vec_f, vec_in)*dot(vec_f, vec_in)/dist2(vec_f)/dist2(vec_in);
 		double dist_f = sqrt(dist2(vec_f));
 		vec_f.first /= dist_f;
@@ -158,21 +179,15 @@ bool Bullet::update_wave(int x, int y, double z, ToolType type, std::pair<Point,
 	return false;
 }
 
-void Bullet::update_line() {
-	
-}
-
 bool Bullet::update_electrode(BulletState collid_electrode) {
-	if (this->state != BulletState::NEGATIVE || this->state != BulletState::POSITIVE)
+	if (this->state != BulletState::NEGATIVE && this->state != BulletState::POSITIVE)
 		return false; // 這個子彈沒有電極 不理
 	if (this->state == collid_electrode) {
 		return false; // don't delete this bullet
 	}
 	// declare new Explode object
+	this->alive = false;
 	return true; // need to delete this bullet
-}
-void Bullet::update_force(Point force_source) { // 第三關要用的
-	// modify velocity of the bullet
 }
 
 void Bullet::draw() {
