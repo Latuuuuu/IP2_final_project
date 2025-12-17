@@ -77,8 +77,8 @@ protected:
 	std::vector<std::pair<ALLEGRO_BITMAP*, Point>> button_items;
 	int on_item;
 	// fixed settings
-	const int button_img_left_padding = 30;
-	const int button_img_top_padding = 30;
+	const int button_img_left_padding = -30;
+	const int button_img_top_padding = 60;
 private:
 };
 

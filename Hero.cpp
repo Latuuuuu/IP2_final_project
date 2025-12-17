@@ -27,7 +27,7 @@ namespace BulletSetting {
 void Hero::init(int lvl) {
     all_skin_paths.resize(10);
 
-    std::vector<std::string> bullet_prefixes= { "slime", "ice", "water", "vapor"};
+    std::vector<std::string> bullet_prefixes= { "slime", "ice", "water", "vapor", "beam"};
     for (int s = 0; s < (int)bullet_prefixes.size(); ++s) {
         all_skin_paths[s].resize(static_cast<int>(HeroState::HEROSTATE_MAX));
         
@@ -97,6 +97,7 @@ void Hero::change_skill_state(SkillState new_state){
         }
         else if(new_state == SkillState::WAVE){
             bullet_state = BulletState::LASER;
+            apply_skin(4);
         }
         skill_state = new_state;
     }
@@ -118,9 +119,11 @@ void Hero::update() {
             }
         } else if (DC->key_state[ALLEGRO_KEY_2] && !DC->prev_key_state[ALLEGRO_KEY_2]) {
             if (skill_state == SkillState::WAVE) {
+                apply_skin(0);
                 skill_state = SkillState::NORMAL;
                 bullet_state = BulletState::BALL;
             } else {
+                apply_skin(4);
                 skill_state = SkillState::WAVE;
                 bullet_state = BulletState::LASER;
             }

@@ -70,7 +70,7 @@ void UI_game::draw_player_hp() {
             liquid_color = al_map_rgb(152, 160, 255); // 淡紫色
             break;
         case BulletState::LASER:
-            liquid_color = al_map_rgb(255, 255, 0); // 黃色
+            liquid_color = al_map_rgb(247,255,134); // 黃色
             break;
         default:
             liquid_color = al_map_rgb(119, 255, 171); // 預設為史萊姆綠
