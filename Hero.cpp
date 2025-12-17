@@ -89,14 +89,16 @@ void Hero::change_skill_state(SkillState new_state){
         apply_skin(2);
         bullet_state = BulletState::LIQUID;
     }
-    else if (new_state == SkillState::ELECTRIC) {
+    else if (new_state == SkillState::ELECTRIC && DC->level->get_puzzle_solved()) {
         force_shape.r = 200;
-        e = 50;
-        bullet_state = (DC->level->get_puzzle_solved()) ? BulletState::POSITIVE : BulletState::BALL;
+        bullet_state = BulletState::POSITIVE;
     }
     else if (new_state == SkillState::WAVE) {
         apply_skin(4);
         bullet_state = (DC->level->get_puzzle_solved()) ? BulletState::LASER : BulletState::BALL;
+        tool_type = ToolType::CONCAVE;
+    } else {
+        bullet_state = BulletState::BALL;
     }
     skill_state = new_state;
     // }
@@ -137,13 +139,15 @@ void Hero::update() {
             }
         }
     }
-    if (DC->key_state[ALLEGRO_KEY_Q] && !DC->prev_key_state[ALLEGRO_KEY_Q] && skill_state == SkillState::WAVE) {
+    if ((DC->key_state[ALLEGRO_KEY_Q] && !DC->prev_key_state[ALLEGRO_KEY_Q] && skill_state == SkillState::WAVE) ||
+        (tool_type == ToolType::MIRROR && DC->level->get_monster_spawn())) {
         tool_type = ToolType::CONCAVE;
     } else if (DC->key_state[ALLEGRO_KEY_E] && !DC->prev_key_state[ALLEGRO_KEY_E] && skill_state == SkillState::WAVE) {
         tool_type = ToolType::CONVEX;
     } else if (DC->key_state[ALLEGRO_KEY_R] && !DC->prev_key_state[ALLEGRO_KEY_R] && skill_state == SkillState::WAVE && !DC->level->get_monster_spawn()) {
         tool_type = ToolType::MIRROR;
-    } else if (skill_state == SkillState::ELECTRIC && !DC->level->get_monster_spawn()) {
+    }
+    if (skill_state == SkillState::ELECTRIC && !DC->level->get_monster_spawn()) {
         // std::cout << "tool type: " << (int)tool_type << std::endl;
         tool_type = ToolType::E_FIELD;
     }
