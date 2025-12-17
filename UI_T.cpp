@@ -59,13 +59,13 @@ void UI::draw() {
 	// const Point &mouse = DC->mouse;
 	// draw button
 	for(auto &[bitmap, p] : button_items) {
-		int w = al_get_bitmap_width(bitmap);
-		int h = al_get_bitmap_height(bitmap);
+		// int w = al_get_bitmap_width(bitmap);
+		// int h = al_get_bitmap_height(bitmap);
 		al_draw_bitmap(bitmap, p.x, p.y, 0);
-		al_draw_rectangle(
-			p.x - 1, p.y - 1,
-			p.x + w + 1, p.y + h + 1,
-			al_map_rgb(0, 0, 0), 1);
+		// al_draw_rectangle(
+		// 	p.x - 1, p.y - 1,
+		// 	p.x + w + 1, p.y + h + 1,
+		// 	al_map_rgb(0, 0, 0), 1);
 	}
 
 	switch(state) {

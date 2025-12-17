@@ -444,10 +444,10 @@ Game::game_draw() {
 							DC->camera->transform_bitmap(0, 0).center_y(), 0);
 			DC->level->draw();
 			DC->hero->draw();
-			ui_pause->draw();
 			OC->draw();
 			// game layout cover
-			al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(50, 50, 50, 64));
+			al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(30, 30, 30, 80));
+			ui_pause->draw();
 			al_draw_text(
 				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
 				DC->window_width/2., DC->window_height/2.,
