@@ -22,7 +22,7 @@ namespace LevelSetting {
 	};
 	constexpr int monster_spawn_rate = 90;
 	constexpr int hero_spawn_x[4] = {
-		-320, 4705, 7828, 10837
+		-320, 4385, 7508, 10517 //4705, 7828, 10837
 	};
 	constexpr int puzzle_bound_x[4] = {
 		2816, 5895, 8858, 10777 //1280./
@@ -31,25 +31,26 @@ namespace LevelSetting {
 		3476, 6495, 9458, 11377
 	};
 	constexpr int lvl_bound_x[5] = {
-		0, 4645, 7768, 10777, 12697
+		0, 4645, 7768, 10777, 12917
 	};
 	const std::array<std::string, 4> lvl_background_path = {
 		"./assets/image/background/lv1.png", // "./assets/image/background/lv1.png"
 		"./assets/image/background/lv2.png", 
 		"./assets/image/background/lv3.png",
-		"./assets/image/lvl4_background.png"
+		"./assets/image/background/lv4.png"
 	};
-	const std::array<std::string, 4> buffer_background_path = {
+	const std::array<std::string, 5> buffer_background_path = {
 		"./assets/image/background/lv1_buffer.png",
 		"./assets/image/background/lv2_buffer.png", 
 		"./assets/image/background/lv3_buffer.png",
-		"./assets/image/tmp_background.png"
+		"./assets/image/background/lv4_buffer.png",
+		"./assets/image/background/lv4_buffer1.png"
 	};
 	const std::array<std::string, 4> instruction_path = {
 		"./assets/image/instruction/lv1_instruction.png",
-		"./assets/image/instruction/lv1_instruction.png", 
-		"./assets/image/instruction/lv1_instruction.png",
-		"./assets/image/instruction/lv1_instruction.png"
+		"./assets/image/instruction/lv2_instruction.png", 
+		"./assets/image/instruction/lv3_instruction.png",
+		"./assets/image/instruction/lv4_instruction.png"
 	};
 };
 
@@ -105,7 +106,7 @@ private:
 	int shoot_cd;
 	std::mt19937 generator;
 	std::uniform_int_distribution<int> distribution{1, 30};
-	int block_x[16] = {176, 396, 616, 836, 1056, 1144, 1364, 1452, 1672, 1760, 1980, 2068, 2156, 2376, 2464, 2552} ;//68
+	int block_x[16] = {308, 528, 748, 968, 1188, 1276, 1496, 1584, 1804, 1892, 2112, 2200, 2280, 2508, 2596, 2684} ;//all+132
 	std::deque<int> recent_x_history;
 	Point shooter_pt;
 	Point receive_pt;

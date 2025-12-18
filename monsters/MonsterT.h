@@ -8,6 +8,7 @@
 #include <vector>
 #include <queue>
 #include <ctime>
+#include <random>
 
 // fixed settings
 enum class Dir {
@@ -17,14 +18,14 @@ enum class MonsterType {
 	MONSTER1, MONSTER2, MONSTER3, MONSTER4, MONSTERTYPE_MAX
 };
 enum class Action {
-	IDLE, STAND, CHASE, TELEPORT
+	IDLE, STAND, RUSH, CHASE, TELEPORT
 };
 namespace MonsterSetting {
-	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][40] = {
+	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][50] = {
 		"./assets/gif/monster/Monster1/monster_1",
 		"./assets/gif/monster/Monster2/monster_2",
-		"./assets/image/monster/Monster3",
-		"./assets/image/monster/Monster4"
+		"./assets/gif/monster/Monster3/monster_3",
+		"./assets/image/monster/Professer/professer"
 	};
 	static constexpr char dir_path_prefix[][10] = {
 		"UP", "DOWN", "LEFT", "RIGHT" //"UP", "DOWN", "LEFT", "RIGHT"
@@ -55,6 +56,7 @@ protected:
 	Point dir_to_vector(const Dir dir);
 	int v;
 	int attack_cd;
+	int atk_period;
 	int graph_h;
 	int graph_w;
 	double adjust_speed_x = 0.0;
@@ -63,23 +65,27 @@ protected:
 	int bitmap_switch_counter;
 	int bitmap_switch_freq;
 	int bitmap_img_id;
-	Action action;
+	Action action, last_action;
 	Dir dir;
 	MonsterType type;
-	Point size;
 	Circle force_shape;
 private:
 	Dir convert_dir(const Point &v);
 	void virtual attack();
 	Point hero_tracker();
+	Point random_direction();
+	void draw_effect();
 	Point position;
+	Point vect;
 	clock_t timer;
 	clock_t cd_timer;
-	int action_timer[4];
+	clock_t atk_period_timer;
+	int action_timer[5];
 	bool need_effect;
 	bool can_attack;
 	bool is_collid;
 	double dist_to_hero;
+	std::random_device rd;
 };
 
 #endif

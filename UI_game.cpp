@@ -64,10 +64,10 @@ void UI_game::draw_player_hp() {
             liquid_color = al_map_rgb(205,237,255); // 淺藍色
             break;
         case BulletState::POSITIVE:
-            liquid_color = al_map_rgb(255,142,123); // 淡粉色
+            liquid_color = al_map_rgb(255,142,123); 
             break;
         case BulletState::NEGATIVE:
-            liquid_color = al_map_rgb(152, 160, 255); // 淡紫色
+            liquid_color = al_map_rgb(152, 160, 255); 
             break;
         case BulletState::LASER:
             liquid_color = al_map_rgb(247,255,134); // 黃色

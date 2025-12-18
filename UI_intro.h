@@ -42,6 +42,7 @@ public:
 		debug_log("<UI intro> state: change to HALT\n");
 		state = STATE::HALT;
 		on_item = -1;
+		intro = true;
 	}
 private:
 };

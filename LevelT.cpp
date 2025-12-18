@@ -110,7 +110,7 @@ void LevelT::update1() {
 		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[0] && !is_monster_spawn) {
 			// init monster for this level
 			// cout << "create monster" << endl;
-			DC->monster = MonsterT::create_monster(MonsterType::MONSTER1, this->spawn_position);
+			DC->monster = MonsterT::create_monster(MonsterType::MONSTER1, Point(LevelSetting::monster_spawn_x[0], DC->window_height / 2));
 			is_monster_spawn = true;
 		}
 	} else {
@@ -161,7 +161,7 @@ void LevelT::update2() {
 		// update arena
 		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[1] && !is_monster_spawn) {
 			// init monster for this level
-			DC->monster = MonsterT::create_monster(MonsterType::MONSTER2, this->spawn_position);
+			DC->monster = MonsterT::create_monster(MonsterType::MONSTER2, Point(LevelSetting::monster_spawn_x[1], DC->window_height / 2));
 			is_monster_spawn = true;
 		}
 	} else {
@@ -208,7 +208,7 @@ void LevelT::update3() {
 		// update arena
 		if (DC->hero->shape->center_x() > LevelSetting::puzzle_bound_x[2] && !is_monster_spawn) {
 			// init monster for this level
-			DC->monster = MonsterT::create_monster(MonsterType::MONSTER3, this->spawn_position);
+			DC->monster = MonsterT::create_monster(MonsterType::MONSTER3, Point(LevelSetting::monster_spawn_x[2], DC->window_height / 2));
 			is_monster_spawn = true;
 		}
 	} else {
@@ -222,6 +222,7 @@ void LevelT::update4() {
 	if (DC->hero->shape->center_x() > LevelSetting::lvl_bound_x[this->level-1] + DC->hero->get_size().center_x() / 2.0 && !is_monster_dead && !is_level_start) {
 		DC->hero->all_skill = true;
 		is_level_start = true;
+		is_puzzle_solved = true;
 	} else if (!is_level_start) {
 		DC->hero->change_skill_state(SkillState::NORMAL);
 	}
@@ -229,7 +230,7 @@ void LevelT::update4() {
 		// update arena
 		if (is_level_start && !is_monster_spawn) {
 			// init monster for this level
-			DC->monster = MonsterT::create_monster(MonsterType::MONSTER4, this->spawn_position);
+			DC->monster = MonsterT::create_monster(MonsterType::MONSTER4, Point(LevelSetting::monster_spawn_x[3], DC->window_height / 2));
 			is_monster_spawn = true;
 		}
 	} else {
@@ -254,11 +255,11 @@ void LevelT::draw() {
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_x(),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_y(), 0);
 
-			ALLEGRO_COLOR tint_color = al_map_rgba_f(0.5,0.5,0.5,0.5);
-			ALLEGRO_BITMAP *instruction = IC->get(LevelSetting::instruction_path[0]);
+			ALLEGRO_COLOR tint_color = al_map_rgba_f(0.6,0.6,0.6,0.6);
+			ALLEGRO_BITMAP *instruction = IC->get(LevelSetting::instruction_path[i]);
 			al_draw_tinted_bitmap(instruction, tint_color,
-				DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-960, 0).center_x(),
-				DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-960, 0).center_y(), 0);
+				DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_x(),
+				DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_y(), 0);
 		}
 		else if (DC->hero->shape->center_x() >= LevelSetting::lvl_bound_x[i] && DC->hero->shape->center_x() < LevelSetting::puzzle_bound_x[i]) {
 			background = IC->get(LevelSetting::lvl_background_path[i]);

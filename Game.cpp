@@ -431,8 +431,8 @@ Game::game_draw() {
 									Point(0, 0));
 			DC->level->draw();
 			DC->hero->draw();
-			ui_game->draw();
 			OC->draw();
+			ui_game->draw();
 		} else if (state == STATE::PAUSE) {
 			al_draw_bitmap(background,
 							DC->camera->transform_bitmap(0, 0).center_x(),
