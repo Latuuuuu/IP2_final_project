@@ -92,6 +92,7 @@ void Hero::change_skill_state(SkillState new_state){
         if (DC->level->get_puzzle_solved()) {
             force_shape.r = 200;
             bullet_state = BulletState::POSITIVE;
+            apply_skin(6);
         }
     } else if (new_state == SkillState::WAVE) {
         apply_skin(4);
@@ -127,6 +128,7 @@ void Hero::update() {
                 apply_skin(4);
                 skill_state = SkillState::WAVE;
                 bullet_state = BulletState::LASER;
+                tool_type = ToolType::CONCAVE;
             }
         } else if (DC->key_state[ALLEGRO_KEY_3] && !DC->prev_key_state[ALLEGRO_KEY_3]) {
             if (skill_state == SkillState::ELECTRIC) {
