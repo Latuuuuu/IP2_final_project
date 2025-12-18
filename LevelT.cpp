@@ -122,8 +122,8 @@ void LevelT::update1() {
 
 void LevelT::update2() {
 	DataCenter *DC = DataCenter::get_instance();
-	shooter_pt.update_center_x(LevelSetting::lvl_bound_x[this->level-1]+800);
-	shooter_pt.update_center_y(int(DC->window_height * 0.5));
+	shooter_pt.update_center_x(LevelSetting::lvl_bound_x[this->level-1]+300);
+	shooter_pt.update_center_y(340);
 	receive_pt.update_center_x(LevelSetting::lvl_bound_x[this->level-1]+1200);
 	receive_pt.update_center_y(int(DC->window_height * 0.7));
 	Point shoot_vec(1, 0);
@@ -172,9 +172,9 @@ void LevelT::update2() {
 
 void LevelT::update3() {
 	DataCenter *DC = DataCenter::get_instance();
-	shooter_pt.update_center_x(LevelSetting::lvl_bound_x[this->level-1]+800);
-	shooter_pt.update_center_y(int(DC->window_height * 0.5));
-	receive_pt.update_center_x(LevelSetting::lvl_bound_x[this->level-1]+1200);
+	shooter_pt.update_center_x(LevelSetting::lvl_bound_x[this->level-1]+150);
+	shooter_pt.update_center_y(347);
+	receive_pt.update_center_x(LevelSetting::lvl_bound_x[this->level-1]+1000);
 	receive_pt.update_center_y(int(DC->window_height * 0.7));
 	Point shoot_vec(1, 0);
 	if (DC->hero->shape->center_x() > LevelSetting::lvl_bound_x[this->level-1] + DC->hero->get_size().center_x() / 2.0 && !is_monster_dead && !is_level_start) {
@@ -276,6 +276,11 @@ void LevelT::draw() {
 			al_draw_bitmap(background,
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_x(),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_y(), 0);
+			if (i == 3) {
+				al_draw_bitmap(IC->get(LevelSetting::buffer_background_path[i]),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_x(),
+						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_y(), 0);
+			}
 		} else if (DC->hero->shape->center_x() >= LevelSetting::lvl_bound_x[i+1] - 640 && DC->hero->shape->center_x() < LevelSetting::lvl_bound_x[i+1]) {
 			background = IC->get(LevelSetting::lvl_background_path[i]);
 			al_draw_bitmap(background,
@@ -299,27 +304,27 @@ void LevelT::draw() {
 	case 2: {
 		// draw puzzle items
 		// std::cout << "draw device";
-		Point offset = DC->camera->transform_bitmap(shooter_pt.center_x(), shooter_pt.center_y());
+		// Point offset = DC->camera->transform_bitmap(shooter_pt.center_x(), shooter_pt.center_y());
 		Point offset1 = DC->camera->transform_bitmap(receive_pt.center_x(), receive_pt.center_y());
-		std::string path = "./assets/image/block/wall_shoot.png";
+		// std::string path = "./assets/image/block/wall_shoot.png";
 		std::string path1 = "./assets/image/block/wall_receive.png";
-		ALLEGRO_BITMAP *bitmap = IC->get(path);
+		// ALLEGRO_BITMAP *bitmap = IC->get(path);
 		ALLEGRO_BITMAP *bitmap1 = IC->get(path1);
-		al_draw_bitmap(bitmap, offset.center_x() - al_get_bitmap_width(bitmap) / 2.0, offset.center_y() - al_get_bitmap_height(bitmap) / 2.0, 0);
-		al_draw_bitmap(bitmap1, offset1.center_x() - al_get_bitmap_width(bitmap1) / 2.0, offset1.center_y() - al_get_bitmap_height(bitmap) / 2.0, 0);
+		// al_draw_bitmap(bitmap, offset.center_x() - al_get_bitmap_width(bitmap) / 2.0, offset.center_y() - al_get_bitmap_height(bitmap) / 2.0, 0);
+		al_draw_bitmap(bitmap1, offset1.center_x() - al_get_bitmap_width(bitmap1) / 2.0, offset1.center_y() - al_get_bitmap_height(bitmap1) / 2.0, 0);
 		// draw arena items
 		break;
 	}
 	case 3: {
 		// draw puzzle items
-		Point offset = DC->camera->transform_bitmap(shooter_pt.center_x(), shooter_pt.center_y());
+		// Point offset = DC->camera->transform_bitmap(shooter_pt.center_x(), shooter_pt.center_y());
 		Point offset1 = DC->camera->transform_bitmap(receive_pt.center_x(), receive_pt.center_y());
-		std::string path = "./assets/image/block/wall_shoot.png";
+		// std::string path = "./assets/image/block/wall_shoot.png";
 		std::string path1 = "./assets/image/block/wall_receive.png";
-		ALLEGRO_BITMAP *bitmap = IC->get(path);
+		// ALLEGRO_BITMAP *bitmap = IC->get(path);
 		ALLEGRO_BITMAP *bitmap1 = IC->get(path1);
-		al_draw_bitmap(bitmap, offset.center_x() - al_get_bitmap_width(bitmap) / 2.0, offset.center_y() - al_get_bitmap_height(bitmap) / 2.0, 0);
-		al_draw_bitmap(bitmap1, offset1.center_x() - al_get_bitmap_width(bitmap1) / 2.0, offset1.center_y() - al_get_bitmap_height(bitmap) / 2.0, 0);
+		// al_draw_bitmap(bitmap, offset.center_x() - al_get_bitmap_width(bitmap) / 2.0, offset.center_y() - al_get_bitmap_height(bitmap) / 2.0, 0);
+		al_draw_bitmap(bitmap1, offset1.center_x() - al_get_bitmap_width(bitmap1) / 2.0, offset1.center_y() - al_get_bitmap_height(bitmap1) / 2.0, 0);
 		// draw arena items
 		break;
 	}
