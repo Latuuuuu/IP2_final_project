@@ -21,11 +21,11 @@ enum class Action {
 	IDLE, STAND, RUSH, CHASE, TELEPORT
 };
 namespace MonsterSetting {
-	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][40] = {
+	static constexpr char monster_imgs_root_path[static_cast<int>(MonsterType::MONSTERTYPE_MAX)][50] = {
 		"./assets/gif/monster/Monster1/monster_1",
 		"./assets/gif/monster/Monster2/monster_2",
-		"./assets/image/monster/Monster3",
-		"./assets/image/monster/Monster4"
+		"./assets/gif/monster/Monster3/monster_3",
+		"./assets/image/monster/Professer/professer"
 	};
 	static constexpr char dir_path_prefix[][10] = {
 		"UP", "DOWN", "LEFT", "RIGHT" //"UP", "DOWN", "LEFT", "RIGHT"

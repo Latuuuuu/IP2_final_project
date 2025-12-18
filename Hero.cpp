@@ -90,13 +90,16 @@ void Hero::change_skill_state(SkillState new_state){
         bullet_state = BulletState::LIQUID;
     } else if (new_state == SkillState::ELECTRIC) {
         if (DC->level->get_puzzle_solved()) {
+            apply_skin(6);
             force_shape.r = 200;
             bullet_state = BulletState::POSITIVE;
             apply_skin(6);
         }
     } else if (new_state == SkillState::WAVE) {
-        apply_skin(4);
-        bullet_state = (DC->level->get_puzzle_solved()) ? BulletState::LASER : BulletState::BALL;
+        if (DC->level->get_puzzle_solved()) {
+            apply_skin(4);
+            bullet_state = BulletState::LASER;
+        }
         tool_type = ToolType::CONCAVE;
     } else {
         bullet_state = BulletState::BALL;
@@ -136,9 +139,9 @@ void Hero::update() {
                 skill_state = SkillState::NORMAL;
                 bullet_state = BulletState::BALL;
             } else {
+                apply_skin(6);
                 skill_state = SkillState::ELECTRIC;
                 bullet_state = BulletState::POSITIVE;
-                apply_skin(6);
             }
         }
     }
@@ -161,18 +164,21 @@ void Hero::update() {
         }
     }
 
-    if(shift_timer >= 0){ //shift 加速 timer
-        if(shift_timer<=45) speed = 200.0;
-        shift_timer--;
-    }
+    // if(shift_timer >= 0){ //shift 加速 timer
+    //     if(shift_timer<=45) speed = 200.0;
+    //     shift_timer--;
+    // }
     if(mouse_l_timer >= 0){ //left mouse 普攻 timer
         mouse_l_timer--;
     }
 
-    if(DC->key_state[ALLEGRO_KEY_LSHIFT] && shift_timer<=0){ //shift 加速
+    if(DC->key_state[ALLEGRO_KEY_LSHIFT] ){ //shift 加速 && shift_timer<=0
         std::cout << "fast!\n";
         shift_timer = 60;
         speed = 400.0;
+    }
+    else{
+        speed = 250.0;
     }
     const Point &hero_center = Point(shape->center_x(), shape->center_y());
     const Point &mouse = DC->camera->camera_to_global(DC->mouse);
@@ -190,17 +196,18 @@ void Hero::update() {
     if (DC->mouse_state[2] && !DC->prev_mouse_state[2]) { //右鍵切換形態
         if (skill_state == SkillState::SLG) { //三態變化技
             if (bullet_state == BulletState::SOLID) {
-                apply_skin(2);
-                bullet_state = BulletState::LIQUID;
-                std :: cout << "to liquid!\n";
-            } else if (bullet_state == BulletState::LIQUID) {
                 apply_skin(3);
                 bullet_state = BulletState::GAS;
                 std :: cout << "to gas!\n";
-            } else if (bullet_state == BulletState::GAS) {
+                
+            } else if (bullet_state == BulletState::LIQUID) {
                 apply_skin(1);
                 bullet_state = BulletState::SOLID;
                 std :: cout << "to solid!\n";
+            } else if (bullet_state == BulletState::GAS) {
+                apply_skin(2);
+                bullet_state = BulletState::LIQUID;
+                std :: cout << "to liquid!\n";
             } else {
                 apply_skin(2);
                 bullet_state = BulletState::LIQUID;

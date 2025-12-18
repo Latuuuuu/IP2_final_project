@@ -38,6 +38,7 @@ Monster1::Monster1(Point borned_place) : MonsterT(MonsterType::MONSTER1, borned_
 		(shape->center_x() + graph_w / 2.), (shape->center_y() + graph_h / 2.)
 	});
 	force_shape.r = 0;
+	bullet_state = BulletState::SOLID;
 }
 
 void Monster1::attack() {
@@ -63,13 +64,16 @@ void Monster1::attack() {
 			
 			atk = new Bullet(p, t, BulletSetting::bullet_paths[rand_state], 480, BulletSetting::bullet_dmgs[rand_state], 500, bullet_state);
 		} else {
-			const Point &t = dir_to_vector(dir);
-			const Point &p = Point(t.x * max(graph_h, graph_w) + shape->center_x(), 
-								t.y * max(graph_h, graph_w) + shape->center_y());
-			atk = new Bullet(p, t, BulletSetting::bullet_paths[rand_state], 480, BulletSetting::bullet_dmgs[rand_state], 500, bullet_state);
+			for(int i = 0; i < 12; i++){
+				const Point &t = atk_dir[i];
+				const Point &p = Point(t.x * max(graph_h, graph_w) + shape->center_x(), 
+									t.y * max(graph_h, graph_w) + shape->center_y());
+				atk = new Bullet(p, t, BulletSetting::bullet_paths[rand_state], 480, BulletSetting::bullet_dmgs[rand_state], 500, bullet_state);
+				DC->matterBullets.emplace_back(atk);
+			}
 			// atk = new Bullet(p, t, "assets/image/tower/Arcane_Beam.png", 480, 10, 500, static_cast<BulletState>(rand_state));
 		}
-		DC->matterBullets.emplace_back(atk);
+		
 }
 
 void Monster1::draw() {

@@ -58,6 +58,12 @@ void UI::draw() {
 	// FontCenter *FC = FontCenter::get_instance();
 	// const Point &mouse = DC->mouse;
 	// draw button
+	if(intro){
+		ImageCenter *IC = ImageCenter::get_instance();
+		ALLEGRO_COLOR tint_color = al_map_rgba_f(0.7,0.7,0.7,0.7);
+		ALLEGRO_BITMAP *bitmap = IC->get("./assets/image/instruction/introduction.png");
+		al_draw_tinted_bitmap(bitmap, tint_color,0,0,0);
+	}
 	for(auto &[bitmap, p] : button_items) {
 		// int w = al_get_bitmap_width(bitmap);
 		// int h = al_get_bitmap_height(bitmap);
@@ -67,7 +73,6 @@ void UI::draw() {
 		// 	p.x + w + 1, p.y + h + 1,
 		// 	al_map_rgb(0, 0, 0), 1);
 	}
-
 	switch(state) {
 		case STATE::HALT: {
 			break;
