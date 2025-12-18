@@ -254,11 +254,11 @@ void LevelT::draw() {
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_x(),
 						DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i], 0).center_y(), 0);
 
-			ALLEGRO_COLOR tint_color = al_map_rgba_f(0.5,0.5,0.5,0.5);
-			ALLEGRO_BITMAP *instruction = IC->get(LevelSetting::instruction_path[0]);
+			ALLEGRO_COLOR tint_color = al_map_rgba_f(0.6,0.6,0.6,0.6);
+			ALLEGRO_BITMAP *instruction = IC->get(LevelSetting::instruction_path[i]);
 			al_draw_tinted_bitmap(instruction, tint_color,
-				DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-960, 0).center_x(),
-				DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-960, 0).center_y(), 0);
+				DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_x(),
+				DC->camera->transform_bitmap(LevelSetting::lvl_bound_x[i]-640, 0).center_y(), 0);
 		}
 		else if (DC->hero->shape->center_x() >= LevelSetting::lvl_bound_x[i] && DC->hero->shape->center_x() < LevelSetting::puzzle_bound_x[i]) {
 			background = IC->get(LevelSetting::lvl_background_path[i]);

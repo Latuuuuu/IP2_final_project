@@ -19,6 +19,9 @@ private:
 	std::map<Dir, std::string> gifPath;
 	std::mt19937 generator;
 	std::uniform_int_distribution<int> distribution{1, 3};
+	std::vector<Point> atk_dir = {
+		Point(0, -1), Point(0.5, -0.866), Point(0.866, -0.5), Point(1, 0), Point(0.5, 0.866), Point(0.866, 0.5), Point(0, 1), Point(-0.5, 0.866), Point(-0.866, 0.5), Point(-1, 0), Point(-0.5, -0.866), Point(-0.866, -0.5)
+	};
 	int state_timer = 0;
 	int rand_state = 0;
 	int max_hp = 5000;

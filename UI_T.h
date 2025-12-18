@@ -76,6 +76,7 @@ protected:
 	STATE state;
 	std::vector<std::pair<ALLEGRO_BITMAP*, Point>> button_items;
 	int on_item;
+	bool intro = false;
 	// fixed settings
 	const int button_img_left_padding = -55;
 	const int button_img_top_padding_main = 160;

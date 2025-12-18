@@ -92,5 +92,5 @@ void Monster3::draw() {
     if(hp_ratio < 0) hp_ratio = 0;
 	al_draw_filled_rectangle(bar_x, bar_y, bar_x + bar_w, bar_y + bar_h, al_map_rgb(50, 50, 50));
     al_draw_filled_rectangle(bar_x, bar_y, bar_x + (bar_w * hp_ratio), bar_y + bar_h, bar_color);
-    al_draw_rectangle(bar_x, bar_y, bar_x + bar_w, bar_y + bar_h, al_map_rgb(108, 190, 255), 2);
+    al_draw_rectangle(bar_x, bar_y, bar_x + bar_w, bar_y + bar_h, bullet_state == BulletState:: POSITIVE ? al_map_rgb(255,142,123) : al_map_rgb(152, 160, 255), 2);
 }

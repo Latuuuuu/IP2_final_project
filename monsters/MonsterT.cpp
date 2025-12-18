@@ -81,8 +81,8 @@ MonsterT::MonsterT(MonsterType type, Point borned_place) {
 	this->type = type;
 	this->action = Action::IDLE;
 	this->action_timer[0] = 5000;
-	this->action_timer[1] = 5000;
-	this->action_timer[2] = 20000;
+	this->action_timer[1] = 10000;
+	this->action_timer[2] = 15000;
 	this->action_timer[3] = 1000;
 	this->attack_cd = 100;
 	this->can_attack = false;
