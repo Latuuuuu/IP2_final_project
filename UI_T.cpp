@@ -64,6 +64,12 @@ void UI::draw() {
 		ALLEGRO_BITMAP *bitmap = IC->get("./assets/image/instruction/introduction.png");
 		al_draw_tinted_bitmap(bitmap, tint_color,0,0,0);
 	}
+	if(easter){
+		ImageCenter *IC = ImageCenter::get_instance();
+		ALLEGRO_COLOR tint_color = al_map_rgba_f(0.5,0.5,0.5,0.5);
+		ALLEGRO_BITMAP *bitmap = IC->get("./assets/image/easter_egg.png");
+		al_draw_tinted_bitmap(bitmap, tint_color,0,0,0);
+	}
 	for(auto &[bitmap, p] : button_items) {
 		// int w = al_get_bitmap_width(bitmap);
 		// int h = al_get_bitmap_height(bitmap);

@@ -19,9 +19,9 @@
 #include <iostream>
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
-constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
+constexpr char game_start_sound_path[] = "./assets/sound/growl.mp3";//
 constexpr char background_img_path[] = "./assets/image/StartBackground.png";
-constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
+constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.mp3";//
 
 /**
  * @brief Game entry.

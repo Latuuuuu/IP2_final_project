@@ -42,6 +42,7 @@ public:
 		debug_log("<UI setting> state: change to HALT\n");
 		state = STATE::HALT;
 		on_item = -1;
+		easter = true;
 	}
 private:
 };
